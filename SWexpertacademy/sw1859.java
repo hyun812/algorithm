@@ -1,6 +1,3 @@
- package SWExpectAcademy;
-
-
 import java.util.*;
 import java.io.*;
 
