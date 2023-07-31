@@ -1,91 +1,81 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.StringTokenizer;
 
+/**
+ * Main
+ */
 public class Main {
-    static int[][] game=new int[19][19];
+    static int n = 19;
+    static int[][] arr = new int[n][n];
+    static int[] dx =  { 0, 1, 1, -1 };
+    static int[] dy = { 1, 1, 0, 1 };
+
     public static void main(String[] args) throws Exception {
-        //////////////////////////////////////////////////////////////
-        // 테스트 후 아래 파일 입력을 표준입력으로 처리하는 문장은 주석 처리해주세요!!!! ( System.setIn처리 코드 )
-        //////////////////////////////////////////////////////////////
-        //System.setIn(new FileInputStream("Test5.txt"));
-        
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        
-        for(int i=0;i<19;i++)
-        {
-            String[] tmp=br.readLine().split(" ");
-            for(int j=0;j<19;j++)
-            {                
-                game[i][j]=Integer.parseInt(tmp[j]);
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(bf.readLine());
+            for (int j = 0; j < n; j++) {
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        
-        for(int i=0;i<19;i++)
-        {
-            for(int j=0;j<19;j++)
-            {
-                if(game[i][j]!=0)
-                {
-                    if(checkWin(i,j,game[i][j]))
-                    {
-                        return;
+        int result = -1;
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (arr[i][j] != 0) {
+                    if(check(i, j, arr[i][j])){
+                        result = arr[i][j];
+                        x = i;
+                        y = j;
                     }
                 }
             }
         }
-        System.out.println(0);
-        
-        
+
+        if(result == -1){
+            System.out.println(0);
+        }else{
+            System.out.println(result);
+            System.out.println((x+1) + " " + (y+1));
+        }
+
     }
-    static boolean checkWin(int y,int x,int team)
-    {
-//        int[] dx= {0,1,1,1,0,-1,-1,-1};
-//        int[] dy= {-1,-1,0,1,1,1,0,-1};
-        int[] dx= {1,1,1,0};
-        int[] dy= {-1,0,1,1};
-        for(int i=0;i<4;i++)
-        {
-            int cnt=1;
-            int tx=x+dx[i];
-            int ty=y+dy[i];
-            
-            //이전에 쟀던 라인 체크하여 제외
-            int bx=x-dx[i];
-            int by=y-dy[i];
-            if(bx>=0&&by>=0&&bx<19&&by<19&&game[by][bx]==team)
-            {
+
+    public static boolean check(int x, int y, int result) {
+
+        for (int i = 0; i < 4; i++) {
+            int cnt = 1;
+            int nx = dx[i] + x;
+            int ny = dy[i] + y;
+
+            int cx = x - dx[i];
+            int cy = y - dy[i];
+            if (cx >= 0 && cx < n && cy >= 0 && cy < n && arr[cx][cy] == result) {
                 continue;
             }
-            
-            while(cnt<7)
-            {
-                if(tx>=0&&ty>=0&&tx<19&&ty<19&&game[ty][tx]==team)
-                {
+
+            // 6까지 봐야함
+            while (cnt < 7) {
+                if(nx >= 0 && nx < n && ny >= 0 && ny < n && arr[nx][ny] == result){
                     cnt++;
-                }
-                else
+                }else{
                     break;
-                tx+=dx[i];
-                ty+=dy[i];
+                }
+                nx += dx[i];
+                ny += dy[i];
+
             }
-            //System.out.println(y+" "+x+" "+cnt+" "+team);
-            if(cnt==5)
-            {
-                if(team==1)
-                {
-                    System.out.println(1);
-                }
-                else if(team==2)
-                {
-                    System.out.println(2);
-                }
-                System.out.println((y+1)+" "+(x+1));
+
+            if (cnt == 5) {
                 return true;
             }
         }
+
         return false;
     }
 }
