@@ -1,46 +1,55 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import java.util.*;
-import java.io.*;
-
-class Solution
-{
-      static int max = 0;
-	public static void main(String args[]) throws Exception
-	{
+public class Solution {
+	static int[][] arr;
+	static int n;
+	static int m;
+	static int max = 0;
+	
+	public static void main(String[] args) throws Exception {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st = new StringTokenizer(bf.readLine());
-
-    int T = Integer.parseInt(st.nextToken());
-    for(int i=0; i<T; i++){
-      st = new StringTokenizer(bf.readLine());
-      int N = Integer.parseInt(st.nextToken());
-      int M = Integer.parseInt(st.nextToken());
-
-      int[][] arr = new int[N][N];
-      for(int j=0; j<N; j++){
-        st = new StringTokenizer(bf.readLine());
-        for(int k=0; k<N; k++){
-          arr[j][k] = Integer.parseInt(st.nextToken());
-        }
-      }
-      for(int j=0; j<=N-M; j++){
-        for(int k=0; k<=N-M; k++){
-          check(arr, j, k, M);
-        }
-      }
-      System.out.println("#" + (i+1) + " " + max); 
-      max = 0;
-    }
+		StringTokenizer st = new StringTokenizer(bf.readLine());
+		StringBuilder sb = new StringBuilder();
+		int t = Integer.parseInt(st.nextToken());
+		
+		for(int tc=1; tc<=t; tc++) {
+			st = new StringTokenizer(bf.readLine());
+			n = Integer.parseInt(st.nextToken());
+			m = Integer.parseInt(st.nextToken());
+			
+			arr = new int[n][n];
+			
+			for(int i=0; i<n; i++) {
+				st = new StringTokenizer(bf.readLine());
+				for(int j=0; j<n; j++) {
+					arr[i][j] = Integer.parseInt(st.nextToken());
+				}
+			}
+			
+			for(int i=0; i<=n-m; i++) {
+				for(int j=0; j<=n-m; j++) {
+					check(i, j);
+				}
+			}
+			
+			sb.append("#").append(tc).append(" ").append(max).append("\n");
+			max =0;
+		}
+		
+		System.out.println(sb.toString());
 	}
-     static public void check(int[][] arr, int x, int y, int M){
-    int value = 0;
-    for(int i=0; i<M; i++){
-      for(int j=0; j<M; j++){
-        value += arr[x+i][y+j] ;
-      }
-    }
-    if(max < value){
-      max = value;
-    }
-  }
+	
+	public static void check(int x, int y) {
+		int sum = 0;
+		for(int i=x; i<x+m; i++) {
+			for(int j=y; j<y+m; j++) {
+				sum += arr[i][j];
+			}
+		}
+		
+		max = Math.max(sum, max);
+	}
 }
+
