@@ -12,23 +12,12 @@ public class Main {
 		for(int i=0; i<n; i++) {
 			queue.add(i+1);
 		}
-		int result = 0;
-		while(true) {
-			int front = queue.poll();
-			
-			if(queue.size() == 0) {
-				result = front;
-				break;
-			}
-			if(queue.size() == 1) {
-				result = queue.peek();
-				break;
-			}
-			
-			int next = queue.poll();
-			queue.add(next);
+		while(queue.size() != 1) {
+			queue.poll();
+			queue.add(queue.poll());
 		}
 		
-		System.out.println(result);
+		
+		System.out.println(queue.peek());
 	}
 }
