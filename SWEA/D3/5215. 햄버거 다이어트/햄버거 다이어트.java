@@ -1,58 +1,65 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import java.util.*;
-import java.io.*;
+public class Solution {
+    static StringBuilder sb = new StringBuilder();
+    static int max;
+    static int[] taste;
+    static int[] calorie;
+    static boolean[] isSelected;
+    static int n;
+    static int l;
+    public static void main(String[] args) throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-class Solution
-{
-	static int score;
-	static int[] taste;
-	static int[] cal;
-	static int L;
-	public static void main(String[] args) throws Exception  {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(bf.readLine());
-		
-		int T = Integer.parseInt(st.nextToken());
-		
-		for(int i=1; i<=T; i++) {
-			st = new StringTokenizer(bf.readLine());
-			
-			int N = Integer.parseInt(st.nextToken());
-			L = Integer.parseInt(st.nextToken());
-			score = 0;
-			
-			taste = new int[N];
-			cal = new int[N];
-			boolean[] include = new boolean[N];
-			
-			for(int j=0; j<N; j++) {
-				st = new StringTokenizer(bf.readLine());
-				taste[j] = Integer.parseInt(st.nextToken());
-				cal[j] = Integer.parseInt(st.nextToken());
-			}
-			powerset(include, 0, N);
-			
-			System.out.println("#" + i + " " + score);
-		}
-	}
-	
-	public static void powerset(boolean[] include, int k, int n) {
-		if(n == k) {
-			int sumtaste = 0;
-			int sumCal = 0;
-			
-			for(int i=0; i<n; i++) {
-				if(include[i]) {
-					sumtaste += taste[i];
-	            	sumCal += cal[i];
-				}
-			}
-			if(sumCal <= L && score < sumtaste) score = sumtaste;
-			return;
-		}
-		include[k] = false;
-		powerset(include, k+1, n);
-		include[k] = true;
-		powerset(include, k+1, n);
-	}
+        int t = Integer.parseInt(bf.readLine());
+        
+        for(int tc=1; tc<=t; tc++){
+            st = new StringTokenizer(bf.readLine());
+            n = Integer.parseInt(st.nextToken());
+            l = Integer.parseInt(st.nextToken());
+            max = Integer.MIN_VALUE;
+            taste = new int[n];
+            calorie = new int[n];
+            isSelected = new boolean[n];
+            for(int i=0; i<n; i++){
+                st = new StringTokenizer(bf.readLine());
+                taste[i] = Integer.parseInt(st.nextToken());
+                calorie[i] = Integer.parseInt(st.nextToken());
+            }
+
+            check(0);
+
+            sb.append("#").append(tc).append(" ").append(max).append("\n");
+           
+        }
+         System.out.println(sb.toString());
+    }
+
+
+    public static void check(int cnt) {
+        if(cnt == n){
+            int sumT = 0;
+            int sumC = 0;
+            for(int i=0; i<n; i++){
+                if(isSelected[i]){
+                    sumT += taste[i];
+                    sumC += calorie[i];
+                }
+            }
+
+            if(sumC <= l){
+                max = Math.max(max, sumT);
+            }
+            
+            return;
+        }
+
+        isSelected[cnt] = true;
+        check(cnt+1);
+        isSelected[cnt] = false;
+        check(cnt+1);
+    }
 }
