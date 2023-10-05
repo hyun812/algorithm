@@ -2,51 +2,67 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-	static int n, m;
-	static int[][] adj, radj;
+	static int n,m;
+	static int[][] adj;
+	static int tcnt, scnt;
 	static int ans;
-	static int cnt;
-	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
-		int t = Integer.parseInt(bf.readLine());
+		
+		int t = Integer.parseInt(bf.readLine().trim());
+		
 		for(int tc=1; tc<=t; tc++) {
-			n = Integer.parseInt(bf.readLine()); // 학생 수
-			m = Integer.parseInt(bf.readLine()); // 관계 수
+			n = Integer.parseInt(bf.readLine().trim());
+			m = Integer.parseInt(bf.readLine().trim());
 			
-			adj = new int[n+1][n+1]; // 인접행렬
-			radj = new int[n+1][n+1]; // 인접행렬
-			cnt = 0;
+			adj = new int[n+1][n+1];
 			ans = 0;
-			for(int i=0; i<m; i++) { // 관계정보 : 학생번호 1번부터 시작
+			for(int i=0; i<m; i++) {
 				st = new StringTokenizer(bf.readLine());
 				int from = Integer.parseInt(st.nextToken());
 				int to = Integer.parseInt(st.nextToken());
-				adj[from][to] = 1; // from키 < to키
-				radj[to][from] = 1; // to키 < from키
+				adj[from][to] = 1;
 			}
 			
-			for(int i=1; i<=n; i++) { // 모든 학생 기준으로 자신보다 큰 학생, 작은 학생으로 각각 DFS 탐색
-				cnt = 0;
+			for(int i=1; i<=n; i++) {
 				boolean[] visited = new boolean[n+1];
-				dfs(i, adj, visited);
-				dfs(i, radj, visited);
 				
-				if(cnt == n-1) {
+				tcnt = 0;
+				scnt = 0;
+				tdfs(i, visited);
+				sdfs(i, visited);
+				
+				if(tcnt + scnt == n-1) {
 					ans++;
 				}
 			}
-			System.out.println("#"+tc+" " + ans);
+			
+			System.out.println("#"+tc+" "+ans);
+			
+//			for(int i=0; i<=n; i++) {
+//				System.out.println(Arrays.toString(adj[i]));	
+//			}
+//			System.out.println();
 		}
 	}
 	
-	private static void dfs(int cur, int[][] adj, boolean[] visited) {
-		visited[cur] = true;
+	private static void tdfs(int cur, boolean[] visited) {
 		for(int i=1; i<=n; i++) {
-			if(adj[cur][i] == 1 && !visited[i]) {
-				cnt++;
-				dfs(i, adj, visited);
+			if(adj[cur][i] == 1 && !visited[i]) { // 자신보다 크면서 방문하지 않았으면
+				visited[i] = true;
+				tcnt++;
+				tdfs(i, visited);
+			}
+		}
+	}
+	
+	private static void sdfs(int cur, boolean[] visited) {
+		for(int i=1; i<=n; i++) {
+			if(adj[i][cur] == 1 && !visited[i]) { // 자신보다 크면서 방문하지 않았으면
+				visited[i] = true;
+				scnt++;
+				sdfs(i, visited);
 			}
 		}
 	}
