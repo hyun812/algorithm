@@ -2,31 +2,33 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-	static int[][] arr;
-	static int[] selected;
 	static int n,m,c;
-	static int ans;
-
+	static int[][] arr;
 	static boolean[] visited;
-	static int count = 1;
-	static int max1, max2;
+	static ArrayList<int[]> list;
+	static int fmax,smax, fcnt, ans;
 	
 	public static void main(String[] args) throws Exception {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 		
+		// 테스트 케이스 개수
 		int t = Integer.parseInt(bf.readLine());
+		
+		// 테스트 케이스 만큼 반복
 		for(int tc=1; tc<=t; tc++) {
 			st = new StringTokenizer(bf.readLine());
-			n = Integer.parseInt(st.nextToken()); // 벌통들의 크기
-			m = Integer.parseInt(st.nextToken()); // 벌통의 개수
-			c = Integer.parseInt(st.nextToken()); // 꿀을 채취할 수 있는 최대 양
 			
-			ans = Integer.MIN_VALUE;
+			n = Integer.parseInt(st.nextToken()); // 벌통 크기 (배열 크기)
+			m = Integer.parseInt(st.nextToken()); // 벌통의 개수
+			c = Integer.parseInt(st.nextToken()); // 꿀을 채취할 수 있는 최대의 양
 			
 			arr = new int[n][n];
-			selected = new int[2];
+			visited = new boolean[n*n];
+			list = new ArrayList<>();
+			ans = Integer.MIN_VALUE;
 			
+			// 입력 받기
 			for(int i=0; i<n; i++) {
 				st = new StringTokenizer(bf.readLine());
 				for(int j=0; j<n; j++) {
@@ -34,66 +36,77 @@ public class Solution {
 				}
 			}
 			
-			comb(0, 0);
+			select(0, 0);
 			
-			System.out.println("#"+tc+" "+ ans);
+			System.out.println("#"+tc+" "+ans);
 		}
 	}
-	
-	private static void comb(int cnt, int start) {
-		if(cnt == 2) { // 2개 뽑으면
-			// 2개뽑은게 서로 겹치면 return
-			int one = selected[0];
-			int two = selected[1];
+	// 벌통 M개 묶음 2개 선택 (조합) 
+	private static void select(int start, int cnt) {
+		if(cnt == 2) {
+			int[] f = list.get(0);
+			int[] s = list.get(1);
 			
-			if(one/n == two/n && one%n+m > two%n) { // 같으 줄에 있으면서 
-				return;
-			}
+			// 같은줄에 있으면서 겹치면 return
+			if(f[0] == s[0] && f[1]+m > s[1]) return;
 			
-			count = 1;
-			max1 = Integer.MIN_VALUE;
-			max2 = Integer.MIN_VALUE;
-			int[] num1 = new int[m];
-			int[] num2 = new int[m];
-
+			// 선택한 벌통에 있는 꿀의 양을 저장할 배열
+			int[] fArr = new int[m];
+			int[] sArr = new int[m];
 			for(int i=0; i<m; i++) {
-				num1[i] = arr[one/n][one%n+i];
+				fArr[i] = arr[f[0]][f[1]+i];
+				sArr[i] = arr[s[0]][s[1]+i];
 			}
-			for(int i=0; i<m; i++) {
-				num2[i] = arr[two/n][two%n+i];
-			}
+			boolean[] fv = new boolean[m];
+			boolean[] sv = new boolean[m];
+			fcnt = 0; // powerset 각각의 최대값을 구하기 위한 변수
+			fmax = smax = Integer.MIN_VALUE;
 			
-			powerSet(num1, 0, 0, 0);
-			count++;
-			powerSet(num2, 0, 0, 0);
+			powerSet(0,fArr,fv,0);
+			fcnt++;
+			powerSet(0,sArr,sv,0);
 			
-			ans = Math.max(max1+max2, ans);
+			ans = Math.max(ans, fmax+smax);
 			return;
 		}
 		
+		// 2차월 배열 > 1차원 배열로
 		for(int i=start; i<n*n; i++) {
-			if(i%n > n-m) continue;
-			selected[cnt] = i;
-			comb(cnt+1, i+1);
+			int y = i/n;
+			int x = i%n;
+
+			// 같은 줄에 있어야함 + 배열의 범위 벗어나면 x			
+			if(x+m > n) continue;
+			list.add(cnt, new int[] {y, x});
+			select(i+1, cnt+1);
 		}
 	}
-	
-	private static void powerSet(int[] nArr, int cnt, int sum, int cal) {
+	// 1개의 벌통에서 부분집합으로 꿀 확인
+	private static void powerSet(int cnt, int[] ar, boolean[] vi, int sum) {
+		if(sum > c) return; // 이미 채취할 수 있는 최대양을 넘었으면 return		
+		
 		if(cnt == m) {
-			if(sum > c || sum == 0) return;
+			int cal = 0;
+			for(int i=0; i<m; i++) {
+				if(!vi[i]) continue;
+				cal += (ar[i]*ar[i]);
+			}
 			
-			if(count== 1) {
-				max1 = Math.max(cal, max1);
+			if(fcnt == 0) {
+				fmax = Math.max(fmax, cal);
 			}else {
-				max2 = Math.max(cal, max2);
+				smax = Math.max(smax, cal);
 			}
 			
 			return;
 		}
 		
-		int num = nArr[cnt];
-		powerSet(nArr, cnt+1, sum+num, cal+(num*num));
-		powerSet(nArr, cnt+1, sum, cal);
+		vi[cnt] = true;
+		powerSet(cnt+1, ar, vi, sum+ar[cnt]);
+		vi[cnt] = false;
+		powerSet(cnt+1, ar, vi, sum);
 		
 	}
+	
+	// 부분 집합 뽑은 애들 제곱수 확인
 }
