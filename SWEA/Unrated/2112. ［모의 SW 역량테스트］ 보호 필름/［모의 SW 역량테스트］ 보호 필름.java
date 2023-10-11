@@ -1,97 +1,119 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Solution {
+	static int d, w, k;
+	static int[][] arr;
+	static int[] fill;
+	static int ans;
 
-    static int res;
-    static int d,w,k;  // 두께 D, 가로크기 W, 합격기준 K
-    static int[][] map;
-    static int[] arr;
-    public static void main(String[] args) throws Exception {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        int tc = Integer.parseInt(bf.readLine());
+	public static void main(String[] args) throws Exception {
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 
-        for(int t =  1; t <= tc; t++) {
-            st = new StringTokenizer(bf.readLine());
-            d = Integer.parseInt(st.nextToken());
-            w = Integer.parseInt(st.nextToken());
-            k = Integer.parseInt(st.nextToken());
+		// 테스트 케이스 개수
+		int t = Integer.parseInt(bf.readLine());
 
-            map = new int[d][w];
-            res = d;
+		// 테스트 케이스 만큼 반복
+		for (int tc = 1; tc <= t; tc++) {
+			st = new StringTokenizer(bf.readLine());
+			d = Integer.parseInt(st.nextToken());
+			w = Integer.parseInt(st.nextToken());
+			k = Integer.parseInt(st.nextToken());
 
-            for(int i=0; i<d; i++){
-                st = new StringTokenizer(bf.readLine());
-                for(int j=0; j<w; j++){
-                    map[i][j] = Integer.parseInt(st.nextToken());
-                }
-            }
+			arr = new int[d][w];
+			ans = Integer.MAX_VALUE;
+			// 입력받기
+			for (int i = 0; i < d; i++) {
+				st = new StringTokenizer(bf.readLine());
+				for (int j = 0; j < w; j++) {
+					arr[i][j] = Integer.parseInt(st.nextToken());
+					// 0이면 A 1이면 B
+				}
+			}
 
-            arr = new int[d];
-            Arrays.fill(arr, -1); // -1로 채우기
+			fill = new int[d];
+			Arrays.fill(fill, -1);
+			
+			powerset(0, 0);
 
-            dfs(0,0);
-            System.out.println("#"+ t + " " + res);
-        }
+			System.out.println("#" + tc + " " + ans);
+		}
+	}
 
-    }
-    static void dfs(int idx, int cnt) {
-        if(cnt >= res){
-            return;
-        }
+	// 부분집합
+	private static void powerset(int idx, int cnt) {
+		if(cnt > ans) {
+			return;
+		}
+		
+		if (idx == d) {
+			int[][] copy = new int[d][w];
+			for (int i = 0; i < d; i++) {
+				for (int j = 0; j < w; j++) {
+					copy[i][j] = arr[i][j];
+				}
+			}
+			
+			fillMed(copy);
+			if(checkCol(copy)) {
+				ans = Math.min(ans, cnt);
+			}
+			return;
+		}
 
-        if(idx == d){
-            if(check()){
-                res = Math.min(res,cnt);
-            }
-            return;
-        }
+		// 안 채우기
+		fill[idx] = -1;
+		powerset(idx + 1, cnt);
 
-        arr[idx] = -1;
-        dfs(idx+1, cnt);
+		// 0으로 채우기 (A)
+		fill[idx] = 0;
+		powerset(idx + 1, cnt + 1);
 
-        arr[idx] = 0;
-        dfs(idx+1, cnt+1);
+		// 1로 채우기 (B)
+		fill[idx] = 1;
+		powerset(idx + 1, cnt + 1);
 
-        arr[idx] = 1;
-        dfs(idx+1, cnt+1);
-    }
+	}
 
-    private static boolean check() { // 성능 검사
-        int cnt;
-        int a, b;
-        for(int i=0; i<w; i++){
-            cnt = 1;
-            for(int j=0; j<d-1; j++){
-                a = map[j][i];
-                b = map[j+1][i];
+	// 해당 라인 약품 집어넣기
+	private static void fillMed(int[][] copy) {
+		for(int i=0; i<d; i++) {
+			if(fill[i] == -1) continue;
+				for(int j=0; j<w; j++) {				
+					copy[i][j] = fill[i];
+				}
+		}
+	}
 
-                if(arr[j] != -1){
-                    a = arr[j];
-                }
-                if(arr[j+1] != -1){
-                    b = arr[j+1];
-                }
+	// 세로방향으로 확인하면서 k개 이상 연속적으로 있는지 확인
+	private static boolean checkCol(int[][] copy) {
 
-                if(a == b){
-                    cnt++;
-                }else{
-                    cnt = 1;
-                }
+		for (int i = 0; i < w; i++) {
+			int cnt = 1; // 연속하는 개수를 세기 위한 변수
+			int cur = copy[0][i]; // 최근 사용한 셀을 담을 변수
+			for (int j = 1; j < d; j++) {
+				if (cnt >= k) // 다음 세로줄로 이동
+					break;
+				if (copy[j][i] == cur) { // 최근 사용한 것과 같으면 cnt 증가
+					cnt++;
 
-                if(cnt == k){
-                    break;
-                }
+				} else { // 다르다면 초기화
+					cur = copy[j][i];
+					cnt = 1;
+				}
+			}
+			if (cnt < k)
+				return false;
+		}
 
-
-            }
-            if(cnt < k) return false;
-        }
-        return true;
-    }
+		return true;
+	}
+	
+	private static void print(int[][] copy) {
+		for(int i=0; i<d; i++) {
+			System.out.println(Arrays.toString(copy[i]));
+		}
+		System.out.println();
+	}
 }
