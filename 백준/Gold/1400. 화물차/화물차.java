@@ -18,7 +18,6 @@ public class Main {
         StringTokenizer st;
         StringBuilder sb = new StringBuilder();
         
-        boolean endFlag = false;
         while(true) {
         	st = new StringTokenizer(bf.readLine());
             n = Integer.parseInt(st.nextToken());
@@ -85,7 +84,6 @@ public class Main {
         visited[startY][startX] = true;
         
         while(!q.isEmpty()) {
-//            print(visited);
             car c = q.poll();
             int y = c.y;
             int x = c.x;
@@ -100,7 +98,6 @@ public class Main {
                     ans = time+1;
                     return;
                 }
-                
                 
                 if(!outOfIdx(ny, nx)) continue;
                 if(visited[ny][nx]) continue;
@@ -193,13 +190,6 @@ public class Main {
             return true;
         }
         return false;
-    }
-    
-    static void print(boolean[][] visited) {
-        for(int i=0; i<n; i++) {
-            System.out.println(Arrays.toString(visited[i]));
-        }
-        System.out.println();
     }
     
     static class car {
