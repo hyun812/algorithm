@@ -23,9 +23,9 @@ public class Main {
 		}
 		
 		for(int i=0; i<n; i++) {
-			if(rowCheck(i))
-				ans++;
 			if(colCheck(i))
+				ans++;
+			if(rowCheck(i))
 				ans++;
 		}
 		
