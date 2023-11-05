@@ -4,7 +4,6 @@ import java.util.*;
 public class Solution {
 	static int n;
 	static int[][] arr;
-	static boolean[] visited;
 	static ArrayList<int[]> list;
 	static int ans;
 	static int maxCount;
@@ -31,7 +30,6 @@ public class Solution {
 				}
 			}
 			
-			visited = new boolean[list.size()];
 			maxCount = Integer.MIN_VALUE;
 			ans = Integer.MAX_VALUE;
 			
@@ -43,6 +41,8 @@ public class Solution {
 	}
 	
 	private static void powerset(int cnt, int count) {
+		if(count + (list.size()-cnt) < maxCount) return;
+		
 		
 		if(cnt == list.size()) {
 			if(maxCount < count) {
@@ -77,10 +77,8 @@ public class Solution {
 				
 			// 연결하기
 			connect(cnt, j, 2);
-			visited[cnt] = true;
 			powerset(cnt+1, count+1);
 			connect(cnt, j, 0);
-			visited[cnt] = false;
 		}
 		powerset(cnt+1, count);		
 	}
