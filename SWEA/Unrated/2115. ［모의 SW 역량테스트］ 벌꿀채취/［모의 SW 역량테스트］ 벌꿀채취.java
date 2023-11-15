@@ -46,7 +46,6 @@ public class Solution {
 			int y2 = nums[1] / n;
 			int x2 = nums[1] % n;
 			
-			if(x1 + m > n || x2 + m > n) return; // 가로로 범위 벗어나는지
 			if(y1 == y2 && x1+m > x2) return; // 겹치는지
 			
 			ArrayList<Integer> l1 = new ArrayList<>();
@@ -59,13 +58,11 @@ public class Solution {
 			
 			res = 0;
 			
-			boolean[] checked1 = new boolean[m];
-			powerset(0, 0, 0, l1, checked1);
+			powerset(0, 0, 0, l1);
 			
 			int temp = res;
 			res = 0;
-			boolean[] checked2 = new boolean[m];
-			powerset(0, 0, 0, l2, checked2);
+			powerset(0, 0, 0, l2);
 			
 			ans = Math.max(ans, res+temp);
 			
@@ -74,6 +71,7 @@ public class Solution {
 		
 		// 2차원 배열을 1차원 배열로
 		for(int i=start; i<n*n-m+1; i++) {
+			if(i%n + m > n) continue; // 범위 벗어나는지 확인
 			nums[cnt] = i;
 			comb(i+1, cnt+1);
 			
@@ -81,7 +79,7 @@ public class Solution {
 	}
 	
 	
-	private static void powerset(int cnt, int bee, int cal, ArrayList<Integer> l, boolean[] checked) {
+	private static void powerset(int cnt, int bee, int cal, ArrayList<Integer> l) {
 		if(bee > c) return;
 		
 		if(cnt == m) {
@@ -89,9 +87,8 @@ public class Solution {
 			return;
 		}
 		
-		checked[cnt] = true;
-		powerset(cnt+1, bee+l.get(cnt), cal+(l.get(cnt)*l.get(cnt)),l, checked);
-		checked[cnt] = false;
-		powerset(cnt+1, bee, cal, l, checked);
+		int target = l.get(cnt);
+		powerset(cnt+1, bee+target, cal+(target*target),l);
+		powerset(cnt+1, bee, cal, l);
 	}
 }
