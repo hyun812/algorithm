@@ -28,14 +28,16 @@ public class Solution {
 				}
 			}
 
+			boolean[] visited = new boolean[101]; // 같은 디저트를 먹었는지 확인하기 위한 배열
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < n; j++) {
-					boolean[] visited = new boolean[101]; // 같은 디저트를 먹었는지 확인하기 위한 배열
 					startY = i;
 					startX = j;
-					int target = arr[startY][startX];
+
+					int target = arr[i][j];
 					visited[target] = true;
 					dfs(i, j, 0, 1, visited);
+					visited[target] = false;
 				}
 			}
 			if (ans == Integer.MIN_VALUE) {
