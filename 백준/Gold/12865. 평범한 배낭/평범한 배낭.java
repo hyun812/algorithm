@@ -23,11 +23,11 @@ public class Main {
 
 		int[] dp = new int[k + 1];
 
-		for (int i = 0; i <= n; i++) {
+		for (int i = 0; i < n; i++) {
 			int w = wArr[i];
 			int v = vArr[i];
 			
-			for (int j = k; j - w >= 0; j--) {
+			for (int j = k; j >= w; j--) {
 				dp[j] = Math.max(dp[j], dp[j - w] + v);
 			}
 		}
