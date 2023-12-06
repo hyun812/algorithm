@@ -8,31 +8,32 @@ public class Main {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 //		StringTokenizer st = new StringTokenizer(bf.readLine());
 		StringBuilder sb = new StringBuilder();
-		
+
 		int n = Integer.parseInt(bf.readLine());
-		Queue<Integer> minQ = new PriorityQueue<>((a, b) -> {
-			return a - b;
-		}); // 작은값 가져옴 (오름차순)
-		Queue<Integer> maxQ = new PriorityQueue<>((a, b) -> {
-			return b - a; 
+		Queue<Integer> leftQ = new PriorityQueue<>((a, b) -> {
+			return b - a;
 		}); // 큰값 가져옴 (내림차순)
+		Queue<Integer> rightQ = new PriorityQueue<>(); // 작은값 가져옴 (오름차순)
+		
 
 		for (int i = 0; i < n; i++) {
 			int num = Integer.parseInt(bf.readLine());
-			
-			if(minQ.size() == maxQ.size()) maxQ.offer(num);
-			else minQ.offer(num);
-			
-			if(!minQ.isEmpty() && !maxQ.isEmpty()) {
-				if(minQ.peek() < maxQ.peek()) {
-					int temp = minQ.poll();
-					minQ.offer(maxQ.poll());
-					maxQ.offer(temp);
+
+			if (rightQ.size() == leftQ.size())
+				leftQ.offer(num);
+			else
+				rightQ.offer(num);
+
+			if (!rightQ.isEmpty() && !leftQ.isEmpty()) {
+				if (leftQ.peek() > rightQ.peek()) {
+					int temp = rightQ.poll();
+					rightQ.offer(leftQ.poll());
+					leftQ.offer(temp);
 				}
 			}
-			sb.append(maxQ.peek()).append("\n");
+			sb.append(leftQ.peek()).append("\n");
 		}
-		
+
 		System.out.println(sb.toString());
 	}
 }
