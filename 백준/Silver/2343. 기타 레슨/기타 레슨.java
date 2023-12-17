@@ -31,7 +31,7 @@ public class Main {
 		int mid = 0;
 		// 45 + 9 /2 = 27
 
-		while (start <= end) {
+		while (start < end) {
 			mid = (start + end) / 2; // 블루레이의 크기
 
 			int sum = 0;
@@ -46,11 +46,11 @@ public class Main {
 			if (cnt > m) {
 				start = mid + 1;
 			} else {
-				end = mid - 1;
+				end = mid;
 			}
 		}
 
-		System.out.println(start);
+		System.out.println(end);
 	}
 
 }
