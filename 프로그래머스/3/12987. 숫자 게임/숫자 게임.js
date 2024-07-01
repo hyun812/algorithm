@@ -1,27 +1,17 @@
 function solution(A, B) {
     let answer = 0;
-    // 7 5 3 1
-    // 8 6 2 2
     
     A.sort((a, b) => b-a);
-    B.sort((a, b) => b-a);
+    B.sort((a, b) => a-b);
     
-    let aIdx = 0;
-    let bIdx = 0;
-    
-    while(true){
-        if(aIdx === A.length || bIdx === B.length) break;
-        const aScore = A[aIdx];
-        const bScore = B[bIdx];
+    for(let i=0; i<A.length; i++){
+        const max = B[B.length - 1];
         
-        if(bScore > aScore){
+        if(A[i] < max){
             answer++;
-            aIdx++;
-            bIdx++;
-        }else{
-            aIdx++;
+            B.pop();
         }
     }
-
+    
     return answer;
 }
