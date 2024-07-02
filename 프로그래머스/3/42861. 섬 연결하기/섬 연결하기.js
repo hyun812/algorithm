@@ -2,11 +2,10 @@ const union = (parents, a, b) => {
     let aRoot = find(parents, a);
     let bRoot = find(parents, b);
     
-    if(aRoot < bRoot){
-        parents[bRoot] = aRoot;    
-    }else{
-        parents[aRoot] = bRoot;
-    }
+    if(aRoot === bRoot) return false;
+    
+    parents[bRoot] = aRoot;
+    return true;
 }
 
 const find = (parents, a) => {
@@ -18,13 +17,6 @@ const find = (parents, a) => {
     }
 }
 
-const isSameParent = (parents, a, b) => {
-    let aRoot = find(parents, a);
-    let bRoot = find(parents, b);
-    
-    return aRoot === bRoot
-}
-
 function solution(n, costs) {
     let answer = 0;
     
@@ -34,13 +26,10 @@ function solution(n, costs) {
     
     costs.sort((a,b) => a[2] - b[2]); // 비용이 낮은순으로 정렬
     
-    let count = 0;
     for(const cost of costs){
-        if(!isSameParent(parents, cost[0], cost[1])){
+        if(union(parents, cost[0], cost[1])){
             answer += cost[2];
-            union(parents, cost[0], cost[1]);
         }
-       
     }
     
     return answer;
