@@ -26,9 +26,11 @@ function solution(n, costs) {
     
     costs.sort((a,b) => a[2] - b[2]); // 비용이 낮은순으로 정렬
     
+    let cnt = 0;
     for(const cost of costs){
         if(union(parents, cost[0], cost[1])){
             answer += cost[2];
+            if(++cnt === n-1) break;
         }
     }
     
