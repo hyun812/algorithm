@@ -11,12 +11,8 @@ function solution(jobs) {
     
     while(jobs.length || heap.size()){
         // 현재 시간과 요청시간이 같다면 모든 요청을 큐에 넣음
-        while(jobs.length){
-            if(jobs[0][0] === time){
-                heap.push(jobs.shift());
-            }else{
-                break;
-            }
+        while(jobs.length && jobs[0][0] === time){
+            heap.push(jobs.shift());
         }
         // 큐가 비어있지 않고 
         // 현재시간이 한 작업이 완료되고 나서의 시간보다 크거나같다면
