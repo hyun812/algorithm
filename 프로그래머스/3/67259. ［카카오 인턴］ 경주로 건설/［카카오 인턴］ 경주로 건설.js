@@ -1,8 +1,4 @@
-// 직선도로 100원, 코너 500원
-// 1이면 벽 => 갈 수 없음
 function solution(board) {
-    var answer = Infinity;
-    
     const len = board.length;
     const dy = [0, 1, 0, -1];
     const dx = [1, 0, -1, 0];
@@ -27,7 +23,7 @@ function solution(board) {
                 
                 let roadCost = dir === i ? cost+100 : cost+600;
                 
-                // 방문하지 않았거나, 비용이 더 크다면
+                // 비용이 더 크다면
                 if(dp[ny][nx][i] > roadCost) { 
                     queue.push([ny, nx, roadCost, i]);
                     dp[ny][nx][i] = roadCost;    
