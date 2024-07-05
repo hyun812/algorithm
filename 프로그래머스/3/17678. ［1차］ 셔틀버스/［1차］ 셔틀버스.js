@@ -17,11 +17,7 @@ function solution(n, t, m, timetable) {
                 curBusTime = table[m-1] - 1;
             }
         }else { // 기존 크루들을 태움
-            if(people > m){ // 타야하는 크루수가 m보다 크다면
-                table.splice(0, m);
-            }else{
-                table.splice(0, people);
-            }
+            table.splice(0, people > m ? m : people);
             curBusTime += t;
         }
     }
