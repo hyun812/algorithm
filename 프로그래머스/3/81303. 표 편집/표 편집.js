@@ -1,7 +1,9 @@
-function Node(idx, prev) {
-    this.idx = idx;
-    this.prev = prev;
-    this.next = null;
+class Node{
+    constructor(idx, prev){
+        this.idx = idx;
+        this.prev = prev;
+        this.next = null;    
+    }
 }
 
 function solution(n, k, cmd) {
