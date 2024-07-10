@@ -13,11 +13,11 @@ function solution(info, edges) {
         if(wolf >= sheep) return;
         answer = Math.max(answer, sheep);
         
-        let possibleNodes = [...next, ...arr[cur]]; // 갈 수 있는 노드 배열
-        possibleNodes.splice(next.indexOf(cur), 1); // 현재 노드 삭제
+         // 갈 수 있는 노드 배열에서 현재 노드 삭제
+        let possible = [...next, ...arr[cur]].filter(n => n !== cur);
         
-        for (let next of possibleNodes) {
-            dfs(next, possibleNodes, sheep, wolf);
+        for (let node of possible) {
+            dfs(node, possible, sheep, wolf);
         }
     }
     
