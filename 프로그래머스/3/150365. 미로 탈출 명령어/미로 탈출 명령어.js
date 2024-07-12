@@ -23,15 +23,17 @@ function solution(n, m, x, y, r, c, k) {
     if (fast < 0 || fast % 2 != 0) return "impossible";
     
     const dfs = (cur, path) => {
-        if(answer) return;
+        if(answer) return; // 젤 처음 도착한 경로가 사전 순으로 빠른 경로이므로
         if(path.length > k) return;
         
         const [nx, ny] = cur;
         
-        if(Math.abs(nx-(r-1) + Math.abs(ny-(c-1)) + path.length > k)){
+        // 남은 최소 거리 + 현재 온 거리가 k보다 크다면
+        if(Math.abs(nx-(r-1) + Math.abs(ny-(c-1)) + path.length > k)){ 
             return;
         }
         
+        // k만큼 이동하여 도착지점에 왔다면
         if(path.length === k && nx === r-1 && ny === c-1){
             answer = path;
             return;
@@ -48,8 +50,7 @@ function solution(n, m, x, y, r, c, k) {
         
     }
     
-    const queue = [x-1, y-1];
-    dfs(queue, "");
+    dfs([x-1, y-1], "");
     
     return answer;
 }
