@@ -6,9 +6,8 @@ function solution(numbers) {
         const n = bi.length;
         const m = n.toString(2).length; // 높이
         
-        let tree = '0'.repeat(2**m -1 - n); // 포화이진트리 형태로 0을 채움
-        tree = tree + '' + bi;
-        
+        // 포화이진트리 형태로 앞에 0을 채움
+        const tree = bi.padStart(2**m -1, "0");
         check(tree, 0, tree.length-1) ? answer.push(1) : answer.push(0);
     }
     
