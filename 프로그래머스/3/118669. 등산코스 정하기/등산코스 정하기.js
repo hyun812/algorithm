@@ -17,26 +17,25 @@ function solution(n, paths, gates, summits) {
     const intensity = new Array(n+1).fill(Infinity);
     
     for(const gate of gates){
-        queue.push([gate, 0]);
+        queue.add([gate, 0]);
         intensity[gate] = 0;
     }
     
     while(queue.size()){
-        const [cur, curWeight] = queue.pop();
+        const [cur, curWeight] = queue.poll();
          
         if(isSummit.has(cur)) continue;
-        // if(intensity[cur] < curWeight) continue;
+        if(intensity[cur] < curWeight) continue;
         
         for(const [next, nextWeight] of graph[cur]){
             const newWeight = Math.max(curWeight, nextWeight);
             
             if(newWeight < intensity[next])  {
                 intensity[next] = newWeight;
-                queue.push([next, newWeight]);
+                queue.add([next, newWeight]);
             }
         }
     }
-    console.log(intensity);
     
     let answer = [0, Infinity];
     summits.sort((a, b) => a-b);
@@ -105,12 +104,12 @@ class Heap {
         this.bubbleDown(minIdx);
     }
     
-    push(value) {
+    add(value) {
         this.heap.push(value);
         this.bubbleUp();
     }
     
-    pop() {
+    poll() {
         if(this.size() === 0) return;
         
         if(this.size() === 1) {
