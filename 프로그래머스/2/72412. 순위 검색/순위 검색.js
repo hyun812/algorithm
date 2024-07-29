@@ -40,7 +40,7 @@ function binarySearch(arr, target) {
         const mid = Math.floor((left + right) / 2);
         
         if (arr[mid] >= target) right = mid;
-        else if (arr[mid] < target) left = mid + 1;
+        else left = mid + 1;
     }
-    return arr.length -left; 
+    return arr.length - right; 
 }
