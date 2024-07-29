@@ -10,7 +10,7 @@ function solution(info, query) {
     
         users[key] ? users[key].push(score) : users[key] = [score];
     });
-    Object.keys(users).forEach(key => users[key].sort((a, b) => a - b));
+    Object.keys(users).forEach(key => users[key].sort((a, b) => a - b)); // 이분탐색을 위해 value 값 정렬
 
     query
         .map(q => q.split(/ and | |-/i) // ' and ' 또는 " " 또는 "-"로 split
@@ -29,7 +29,6 @@ function getResult(users, query, score) {
     return key
             .filter(k => query.every(v => k.includes(v)))
             .reduce((acc, cur) => acc + binarySearch(users[cur], score), 0);
-            // .reduce((acc, cur) => acc + users[cur].length - binarySearch(users[cur], score), 0);
 }
 
 function binarySearch(arr, target) {
