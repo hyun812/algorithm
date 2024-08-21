@@ -1,12 +1,20 @@
 function solution (n) {
-    const dp = new Array(n+1).fill(0);
-    dp[0] = dp[1] = 1;
+    let answer = 0;
     
-    for(let i = 2; i <= n; i++) {
-        for(let j = 1; j <= i; j++) {
-            dp[i] += dp[j-1] * dp[i-j];
+    const dfs = (open, close) => {
+        if(open+close === n*2){
+            if(open === n && close === n) answer++;
+            return;
         }
+        
+        if(open > close){
+            dfs(open, close+1);
+        }
+        dfs(open+1, close);
+        return;
     }
+    
+    dfs(0, 0);
   
-    return dp[n]; 
+    return answer; 
 }
