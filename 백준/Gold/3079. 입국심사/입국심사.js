@@ -26,4 +26,4 @@ const binarySearch = () => {
   return right;
 };
 
-console.log(String(binarySearch()));
+console.log(Number(binarySearch()));
