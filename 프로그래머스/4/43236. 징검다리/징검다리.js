@@ -1,38 +1,32 @@
 function solution(distance, rocks, n) {
-    var answer = 0;
+    let answer = 0;
     if (rocks.length == n) return distance;
-
-    rocks = [0, ...rocks.sort((a,b)=>a-b), distance];
     
-    const binarySearch = () => {
-        let left = 0;
-        let right = rocks[rocks.length-1];
+    rocks = [...rocks.sort((a, b) => a - b), distance];
+    
+    let left = 0;
+    let right = rocks[rocks.length - 1];
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2); // 각 바위 사이 거리
         
-        while(left < right){
-            let mid = Math.floor((left+right)/2);
-            
-            let count = 0, now = 0;
-            
-            for(let i=1; i<rocks.length; i++){
-                if(rocks[i] - now < mid){ // 바위 삭제
-                    count++;
-                }else { // 현재 바위 위치 변경
-                    now = rocks[i];
-                }
-            }
-            
-            if(count > n) {
-                right = mid;
+        let count = 0; // 제거된 바위 수
+        let now = 0;
+        for(const rock of rocks) {
+            if(rock - now < mid) {
+                count++;
             }else {
-                left = mid + 1;
+                now = rock;
             }
         }
-        answer = right-1;
+        
+        if(count > n) {
+            right = mid - 1;
+        }else {
+            left = mid + 1;  
+            answer = Math.max(answer, mid);
+        }
     }
-    
-    binarySearch();
-    
-    
     
     return answer;
 }
