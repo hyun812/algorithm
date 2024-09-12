@@ -1,3 +1,37 @@
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.front = null;
+    this.rear = null;
+    this.size = 0;
+  }
+
+  enqueue(data) {
+    const newNode = new Node(data);
+
+    if (!this.size) this.front = newNode;
+    else this.rear.next = newNode;
+
+    this.rear = newNode;
+    this.size++;
+  }
+
+  dequeue() {
+    if (!this.size) return null;
+
+    const data = this.front.data;
+    this.front = this.front.next;
+    this.size--;
+    return data;
+  }
+}
+
 const fs = require('fs');
 const filePath = process.platform === 'linux' ? './dev/stdin' : 'index.txt';
 const input = fs.readFileSync(filePath).toString().trim().split('\n');
@@ -15,13 +49,14 @@ const dy = [-1, 1, 0, 0];
 const dx = [0, 0, -1, 1];
 
 const bfs = (startY, startX) => {
-  const queue = [[startY, startX, 0]];
+  const queue = new Queue();
   const visited = Array.from({ length: N }, () => Array(M).fill(0));
 
+  queue.enqueue([startY, startX, 0]);
   visited[startY][startX] = 1;
 
-  while (queue.length) {
-    const [y, x, length] = queue.shift();
+  while (queue.size) {
+    const [y, x, length] = queue.dequeue();
 
     answer = Math.max(answer, length);
 
@@ -34,7 +69,7 @@ const bfs = (startY, startX) => {
       if (visited[ny][nx]) continue;
 
       visited[ny][nx] = 1;
-      queue.push([ny, nx, length + 1]);
+      queue.enqueue([ny, nx, length + 1]);
     }
   }
 };
