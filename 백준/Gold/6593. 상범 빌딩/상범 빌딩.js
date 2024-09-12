@@ -1,115 +1,110 @@
 class Node {
-	constructor(item) {
-		this.item = item;
-		this.next = null;
-	}
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
 }
 
 class Queue {
-	constructor() {
-		this.head = null;
-		this.tail = null;
-		this.length = 0;
-	}
+  constructor() {
+    this.front = null;
+    this.rear = null;
+    this.size = 0;
+  }
 
-	push(item) {
-		const node = new Node(item);
-		if (this.head == null) {
-			this.head = node;
-		} else {
-			this.tail.next = node;
-		}
+  enqueue(data) {
+    const newNode = new Node(data);
 
-		this.tail = node;
-		this.length += 1;
-	}
+    if (!this.size) this.front = newNode;
+    else this.rear.next = newNode;
 
-	pop() {
-		const popItem = this.head;
-		this.head = this.head.next;
-		this.length -= 1;
-		return popItem.item;
-	}
+    this.rear = newNode;
+    this.size++;
+  }
+
+  dequeue() {
+    if (!this.size) return null;
+
+    const data = this.front.data;
+    this.front = this.front.next;
+    this.size--;
+    return data;
+  }
 }
 
 const fs = require('fs');
-const input = fs.readFileSync('./dev/stdin').toString().trim().split('\n');
+const filePath = process.platform === 'linux' ? './dev/stdin' : 'index.txt';
+const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-const dx = [0, 0, 0, 0, -1, 1];
-const dy = [0, 0, 1, -1, 0, 0];
-const dz = [1, -1, 0, 0, 0, 0];
+const dz = [0, 0, 0, 0, -1, 1];
+const dy = [-1, 1, 0, 0, 0, 0];
+const dx = [0, 0, -1, 1, 0, 0];
 
 const answer = [];
-
 while (input.length > 1) {
-	const [L, R, C] = input.shift().split(' ').map(Number);
+  const [L, R, C] = input.shift().split(' ').map(Number);
 
-	//빌딩 만들기
-	const building = input.splice(0, (R + 1) * L).reduce(
-		(r, v) => {
-			if (v == '') {
-				r.push([]);
-			} else {
-				r[r.length - 1].push(v.split(''));
-			}
-			return r;
-		},
-		[[]]
-	);
-	building.pop();
+  //빌딩 만들기
+  const building = input.splice(0, (R + 1) * L).reduce(
+    (r, v) => {
+      if (v == '') {
+        r.push([]);
+      } else {
+        r[r.length - 1].push(v.split(''));
+      }
+      return r;
+    },
+    [[]]
+  );
+  building.pop();
 
-	// 상범이의 모험
-	const result = sol(L, R, C, building);
-	answer.push(result);
+  // 상범이의 모험
+  const result = solution(L, R, C, building);
+  answer.push(result);
 }
 console.log(answer.join('\n'));
 
-function sol(L, R, C, building) {
-	// 방문했던 곳 표시할 배열
-	let visited = Array.from(Array(L), () => Array.from(Array(R), () => Array(L).fill(false)));
+function solution(L, R, C, building) {
+  let start = [];
+  let end = [];
+  let visited = Array.from({ length: L }, () => Array.from({ length: R }, () => Array(C).fill(0)));
 
-	// 상범이 위치와 목적지 찾기
-	let s = [];
-	let e = [];
+  for (let i = 0; i < L; i++) {
+    for (let j = 0; j < R; j++) {
+      for (let k = 0; k < C; k++) {
+        if (building[i][j][k] === 'S') {
+          start = [i, j, k];
+        } else if (building[i][j][k] === 'E') {
+          end = [i, j, k];
+        }
+      }
+    }
+  }
 
-	for (let k = 0; k < L; k++) {
-		for (let i = 0; i < R; i++) {
-			for (let j = 0; j < C; j++) {
-				if (building[k][i][j] == 'S') {
-					s = [k, i, j];
-					visited[k][i][j] = true;
-				} else if (building[k][i][j] == 'E') {
-					e = [k, i, j];
-				}
-			}
-		}
-	}
-	const q = new Queue();
-	q.push([...s, 0]);
-	while (q.length > 0) {
-		const [z, x, y, t] = q.pop();
-		if (z == e[0] && x == e[1] && y == e[2]) {
-			return `Escaped in ${t} minute(s).`;
-		}
+  const queue = new Queue();
 
-		for (let k = 0; k < 6; k++) {
-			const nz = z + dz[k];
-			const nx = x + dx[k];
-			const ny = y + dy[k];
-			if (
-				nz < 0 ||
-				nz >= L ||
-				nx < 0 ||
-				nx >= R ||
-				ny < 0 ||
-				ny >= C ||
-				visited[nz][nx][ny] ||
-				building[nz][nx][ny] == '#'
-			)
-				continue;
-			visited[nz][nx][ny] = true;
-			q.push([nz, nx, ny, t + 1]);
-		}
-	}
-	return 'Trapped!';
+  queue.enqueue([...start, 0]);
+  visited[start[0]][start[1]][start[2]] = 1;
+
+  while (queue.size) {
+    const [z, y, x, len] = queue.dequeue();
+
+    if (z === end[0] && y === end[1] && x === end[2]) {
+      return `Escaped in ${len} minute(s).`;
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const nz = z + dz[i];
+      const ny = y + dy[i];
+      const nx = x + dx[i];
+
+      if (nz < 0 || ny < 0 || nx < 0 || nz >= L || ny >= R || nx >= C) continue;
+      if (building[nz][ny][nx] === '#') continue;
+      if (visited[nz][ny][nx]) continue;
+
+      visited[nz][ny][nx] = 1;
+      queue.enqueue([nz, ny, nx, len + 1]);
+    }
+  }
+  return 'Trapped!';
 }
