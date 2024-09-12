@@ -1,80 +1,115 @@
-const input = require('fs').readFileSync('/dev/stdin').toString().trim().split('\n').map(row => row.trim());
+class Node {
+	constructor(item) {
+		this.item = item;
+		this.next = null;
+	}
+}
 
-const testCases = (() => {
-  const testCases = [];
+class Queue {
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.length = 0;
+	}
 
-  while (input.length) {
-    const [Z, Y, X] = input.shift().split(' ').map(val => +val);
-    const building = [];
-    
-    let splitCount = 0;
-    let start = { x: null, y: null, z: null };
+	push(item) {
+		const node = new Node(item);
+		if (this.head == null) {
+			this.head = node;
+		} else {
+			this.tail.next = node;
+		}
 
-    while (splitCount !== Z && input.length) {
-      if (input[0].length === 0) {
-        splitCount += 1;
-        if (splitCount !== Z) building.push([]);
-        input.shift();
-        
-        continue;
-      }
+		this.tail = node;
+		this.length += 1;
+	}
 
-      if (!building.length) building.push([]);
+	pop() {
+		const popItem = this.head;
+		this.head = this.head.next;
+		this.length -= 1;
+		return popItem.item;
+	}
+}
 
-      const row = [...input.shift()];
+const fs = require('fs');
+const input = fs.readFileSync('./dev/stdin').toString().trim().split('\n');
 
-      if (row.includes('S')) start = { x: row.indexOf('S'), y: building[splitCount].length, z: splitCount };
-      building.at(-1).push(row);
-    }
+const dx = [0, 0, 0, 0, -1, 1];
+const dy = [0, 0, 1, -1, 0, 0];
+const dz = [1, -1, 0, 0, 0, 0];
 
-    if (Z === 0 || Y === 0 || X === 0) input.shift();
-    testCases.push({ building, start, X, Y, Z });
-  }
+const answer = [];
 
-  return testCases;
-})();
+while (input.length > 1) {
+	const [L, R, C] = input.shift().split(' ').map(Number);
 
-const dirs = [
-  [1, 0, 0],
-  [-1, 0, 0],
-  [0, 1, 0],
-  [0, -1, 0],
-  [0, 0, -1],
-  [0, 0, 1],
-];
+	//빌딩 만들기
+	const building = input.splice(0, (R + 1) * L).reduce(
+		(r, v) => {
+			if (v == '') {
+				r.push([]);
+			} else {
+				r[r.length - 1].push(v.split(''));
+			}
+			return r;
+		},
+		[[]]
+	);
+	building.pop();
 
-testCases.forEach(tc => {
-  const { building, start: { x, y, z }, X, Y, Z } = tc;
-  const checked = Array.from({ length: Z }).map(() =>
-    Array.from({ length: Y }).map(() => Array.from({ length: X }, () => false))
-  );
+	// 상범이의 모험
+	const result = sol(L, R, C, building);
+	answer.push(result);
+}
+console.log(answer.join('\n'));
 
-  if (!building.length) return;
+function sol(L, R, C, building) {
+	// 방문했던 곳 표시할 배열
+	let visited = Array.from(Array(L), () => Array.from(Array(R), () => Array(L).fill(false)));
 
-  const queue = [[x, y, z, 0]];
+	// 상범이 위치와 목적지 찾기
+	let s = [];
+	let e = [];
 
-  while (queue.length) {
-    const [x, y, z, time] = queue.shift();
+	for (let k = 0; k < L; k++) {
+		for (let i = 0; i < R; i++) {
+			for (let j = 0; j < C; j++) {
+				if (building[k][i][j] == 'S') {
+					s = [k, i, j];
+					visited[k][i][j] = true;
+				} else if (building[k][i][j] == 'E') {
+					e = [k, i, j];
+				}
+			}
+		}
+	}
+	const q = new Queue();
+	q.push([...s, 0]);
+	while (q.length > 0) {
+		const [z, x, y, t] = q.pop();
+		if (z == e[0] && x == e[1] && y == e[2]) {
+			return `Escaped in ${t} minute(s).`;
+		}
 
-    if (building[z][y][x] === 'E') {
-      console.log(`Escaped in ${time} minute(s).`);
-
-      return;
-    }
-
-    dirs.forEach(dir => {
-      const xPos = x + dir[0];
-      const yPos = y + dir[1];
-      const zPos = z + dir[2];
-
-      if (xPos < 0 || yPos < 0 || zPos < 0 || xPos >= X || yPos >= Y || zPos >= Z) return;
-
-      if (checked[zPos][yPos][xPos] || building[zPos][yPos][xPos] === '#') return;
-
-      checked[zPos][yPos][xPos] = true;
-      queue.push([xPos, yPos, zPos, time + 1]);
-    });
-  }
-
-  console.log('Trapped!');
-});
+		for (let k = 0; k < 6; k++) {
+			const nz = z + dz[k];
+			const nx = x + dx[k];
+			const ny = y + dy[k];
+			if (
+				nz < 0 ||
+				nz >= L ||
+				nx < 0 ||
+				nx >= R ||
+				ny < 0 ||
+				ny >= C ||
+				visited[nz][nx][ny] ||
+				building[nz][nx][ny] == '#'
+			)
+				continue;
+			visited[nz][nx][ny] = true;
+			q.push([nz, nx, ny, t + 1]);
+		}
+	}
+	return 'Trapped!';
+}
