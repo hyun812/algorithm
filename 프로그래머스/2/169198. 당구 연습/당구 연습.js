@@ -11,25 +11,19 @@ function solution(m, n, startX, startY, balls) {
         let points = [];
         
         if(startX !== x || startY < y) {
-            const bottom = [x, -y];
-            points.push(bottom)
+            points.push((startX-x)**2 + (startY+y)**2)
         }
         if(startX !== x || startY > y) {
-            const top = [x, n + n - y];
-            points.push(top)
+            points.push((startX-x)**2 + (startY-(n + n - y))**2)
         }
         if(startY !== y || startX < x) {
-            const left = [-x, y];
-            points.push(left)
+            points.push((startX+x)**2 + (startY-y)**2)
         }
         if(startY !== y || startX > x) {
-            const right = [m + m -x, y];
-            points.push(right)
+            points.push((startX-(m + m - x))**2 + (startY-y)**2)
         }
         
-        return points.reduce((min, [x1, y1]) => {
-            return Math.min(min, (startX-x1)**2 + (startY-y1)**2);
-        }, m**2 + n**2)
+        return Math.min(...points);
     }
     
     balls.map((ball) => {
