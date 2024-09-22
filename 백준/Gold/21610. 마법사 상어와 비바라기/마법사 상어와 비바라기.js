@@ -3,20 +3,12 @@ const filePath = process.platform === 'linux' ? './dev/stdin' : 'index.txt';
 const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
 const [N, M] = input[0].split(' ').map(Number);
-const map = [];
-for (let i = 0; i < N; i++) {
-  map[i] = input[i + 1].split(' ').map(Number);
-}
-
-const orders = [];
-for (let i = N + 1; i < N + M + 1; i++) {
-  const [d, s] = input[i].split(' ').map(Number);
-  orders.push({ d, s });
-}
+const map = input.slice(1, N + 1).map((v) => v.split(' ').map(Number));
+const orders = input.slice(N + 1).map((v) => v.split(' ').map(Number));
 
 const dy = [0, 0, -1, -1, -1, 0, 1, 1, 1];
 const dx = [0, -1, -1, 0, 1, 1, 1, 0, -1];
-const diaY = [-1, 1, 1, -1];
+const diaY = [-1, 1, 1, -1]; // 대각선 체크
 const diaX = [-1, 1, -1, 1];
 
 let cloud = [
@@ -26,13 +18,14 @@ let cloud = [
   [N - 2, 1],
 ];
 
+// 구름 이동
 const moveCloud = (d, s) => {
   cloud = cloud.map(([y, x]) => {
     let ny = (y + dy[d] * s) % N;
     let nx = (x + dx[d] * s) % N;
 
-    if (ny < 0) ny = N - Math.abs(ny);
-    if (nx < 0) nx = N - Math.abs(nx);
+    if (ny < 0) ny += N;
+    if (nx < 0) nx += N;
     return [ny, nx];
   });
 };
@@ -40,8 +33,9 @@ const moveCloud = (d, s) => {
 const raining = () => {
   if (!cloud) return;
 
-  // 구름이 있었던 칸을 제외하기 위한 방문 체크
+  // 구름이 있었던 칸을 제외하기 위한 체크 배열
   const visited = Array.from({ length: N }, () => Array(N).fill(0));
+
   // 비
   cloud.forEach(([y, x]) => {
     map[y][x]++;
@@ -60,22 +54,22 @@ const raining = () => {
     map[y][x] += count;
   });
 
-  // 구름 생성
-  const newCloud = [];
+  cloud = [];
+
+  // 새로운 구름 생성
   for (let i = 0; i < N; i++) {
     for (let j = 0; j < N; j++) {
       if (map[i][j] < 2) continue;
       if (visited[i][j]) continue;
 
-      newCloud.push([i, j]);
-      map[i][j] = map[i][j] >= 2 ? map[i][j] - 2 : 0;
+      cloud.push([i, j]);
+      map[i][j] -= 2;
     }
   }
-  cloud = newCloud;
 };
 
-orders.forEach((order) => {
-  moveCloud(order.d, order.s);
+orders.forEach(([d, s]) => {
+  moveCloud(d, s);
   raining();
 });
 
