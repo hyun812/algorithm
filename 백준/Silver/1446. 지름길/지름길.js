@@ -103,8 +103,8 @@ const dijkstra = () => {
     }
 
     for (const [next, nextCost] of graph[cur]) {
-      if (dist[next] > cost + nextCost) {
-        dist[next] = cost + nextCost;
+      if (dist[next] > dist[cur] + nextCost) {
+        dist[next] = dist[cur] + nextCost;
         pq.push([next, dist[next]]);
       }
     }
