@@ -6,26 +6,28 @@
     commands: 사용자의 입력 배열
 **/
 function solution(video_len, pos, op_start, op_end, commands) {
-    const len = convertTimeToMinutes(video_len);
-    const m_pos = convertTimeToMinutes(pos);
+    const len = convertTimeToSeconds(video_len);
     
-    let cur = m_pos;
-    cur = openingCheck(cur, convertTimeToMinutes(op_start), convertTimeToMinutes(op_end));
+    let position = convertTimeToSeconds(pos);
+    const opStart = convertTimeToSeconds(op_start);
+    const opEnd = convertTimeToSeconds(op_end);
+    
+    position = openingCheck(position, opStart, opEnd);
     
     commands.forEach(command => {
-        cur = commandDoIt(command, cur, len);
-        cur = openingCheck(cur, convertTimeToMinutes(op_start), convertTimeToMinutes(op_end));
+        position = commandDoIt(command, position, len);
+        position = openingCheck(position, opStart, opEnd);
     })
     
-    return convertMinutesToTime(cur);
+    return convertSecondsToTime(position);
 }
 
-function convertTimeToMinutes(time) {
+function convertTimeToSeconds(time) {
     const [hour, minutes] = time.split(':').map(Number);
     return hour * 60 + minutes;
 }
 
-function convertMinutesToTime(time) {
+function convertSecondsToTime(time) {
     let hour = (Math.floor(time / 60)).toString().padStart(2, "0");
     let minutes = (time % 60).toString().padStart(2, "0");
     
