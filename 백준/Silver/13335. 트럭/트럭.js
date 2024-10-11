@@ -5,24 +5,26 @@ const input = fs.readFileSync(filePath).toString().trim().split('\n');
 const [n, w, L] = input[0].split(' ').map(Number);
 const truck = input[1].split(' ').map(Number);
 
+const bridge = new Array(w).fill(0);
 let time = 0;
-let index = 0;
 
-let bridge = [];
+while (truck.length) {
+  const target = truck[0];
 
-while (true) {
-  if (!bridge.length && index === n) break;
-
-  time++;
-
-  bridge = bridge.filter((v) => v.position !== w).map((v) => ({ truck: v.truck, position: v.position + 1 }));
-
-  // 트럭이 다리위에 올라갈 수 있다면
-  const weight = bridge.map((v) => v.truck).reduce((acc, cur) => acc + cur, 0);
-  if (weight + truck[index] <= L && bridge.length <= w) {
-    bridge.push({ truck: truck[index], position: 1 });
-    index++;
+  const weight = bridge.reduce((acc, cur) => acc + cur, 0);
+  if (weight + target - bridge[0] <= L) {
+    bridge.shift();
+    bridge.push(truck.shift());
+  } else {
+    bridge.shift();
+    bridge.push(0);
   }
+  time++;
+}
+
+while (bridge.length) {
+  bridge.shift();
+  time++;
 }
 
 console.log(time);
