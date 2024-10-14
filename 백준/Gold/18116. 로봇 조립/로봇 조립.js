@@ -18,7 +18,7 @@ for (let i = 1; i <= n; i++) {
     union(+row[1], +row[2]);
   } else if (type === 'Q') {
     const parent = find(+row[1]);
-    answer.push(count[find(parent)]);
+    answer.push(count[parent]);
   }
 }
 
