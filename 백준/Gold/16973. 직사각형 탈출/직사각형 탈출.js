@@ -90,7 +90,7 @@ const bfs = () => {
       const [c, d] = [a + H - 1, b + W - 1];
 
       if (!outOfIndex(a, b)) continue;
-      if (c >= N || d >= M) continue;
+      if (!outOfIndex(c, d)) continue;
       if (visited[a][b]) continue;
       if (map[a][b]) continue;
 
