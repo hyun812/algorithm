@@ -46,18 +46,14 @@ const dy = [-1, 1, 0, 0];
 const dx = [0, 0, -1, 1];
 
 const preSum = Array.from({ length: N }, () => Array(M).fill(0));
-preSum[0][0] = map[0][0];
-for (let i = 1; i < M; i++) preSum[0][i] = preSum[0][i - 1] + map[0][i];
-for (let i = 1; i < N; i++) preSum[i][0] = preSum[i - 1][0] + map[i][0];
+for (let i = 0; i < N; i++) {
+  for (let j = 0; j < M; j++) {
+    const cur = map[i][j];
+    const left = j > 0 ? preSum[i][j - 1] : 0;
+    const up = i > 0 ? preSum[i - 1][j] : 0;
+    const diagonal = i > 0 && j > 0 ? preSum[i - 1][j - 1] : 0;
 
-for (let i = 1; i < N; i++) {
-  for (let j = 1; j < M; j++) {
-    preSum[i][j] = preSum[i][j - 1] + map[i][j];
-  }
-}
-for (let j = 1; j < M; j++) {
-  for (let i = 1; i < N; i++) {
-    preSum[i][j] = preSum[i - 1][j] + preSum[i][j];
+    preSum[i][j] = cur + left + up - diagonal;
   }
 }
 
