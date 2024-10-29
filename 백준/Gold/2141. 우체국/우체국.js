@@ -1,11 +1,13 @@
 const path = process.platform === 'linux' ? '/dev/stdin' : 'index.txt';
 const input = require('fs').readFileSync(path).toString().trim().split('\n');
 
-const [N, ...arr] = input;
+const N = +input[0];
+const city = [];
+for (let i = 0; i < N; i++) {
+  city.push(input[i + 1].split(' ').map(Number));
+}
 
-const city = arr.map((i) => i.split(' ').map(Number));
 city.sort((a, b) => a[0] - b[0]);
-
 const peopleCount = city.reduce((acc, cur) => acc + cur[1], 0);
 
 let sum = 0;
@@ -17,5 +19,4 @@ for (let i = 0; i < N; i++) {
     break;
   }
 }
-
 console.log(answer);
