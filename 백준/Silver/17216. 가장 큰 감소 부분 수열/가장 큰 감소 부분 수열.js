@@ -7,10 +7,10 @@ const arr = input[1].split(' ').map(Number);
 const dp = [...arr];
 
 for (let i = 1; i < N; i++) {
-  for (let j = 0; j < i; j++) {
-    if (arr[i] < arr[j]) {
-      dp[i] = Math.max(dp[i], dp[j] + arr[i]);
-    }
+  for (let j = i - 1; j >= 0; j--) {
+    if (arr[i] >= arr[j]) continue;
+
+    dp[i] = Math.max(dp[i], dp[j] + arr[i]);
   }
 }
 
