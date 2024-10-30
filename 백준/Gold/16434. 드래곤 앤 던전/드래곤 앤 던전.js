@@ -24,9 +24,10 @@ const isDungeonClear = (maxHP) => {
 
     if (type == 1) {
       let man_hit = hp / curATK;
-      if (man_hit * curATK < hp) {
+      if (hp % curATK != 0) {
         man_hit += BigInt(1);
       }
+
       const damage = (man_hit - BigInt(1)) * atk;
       curHP -= damage;
 
