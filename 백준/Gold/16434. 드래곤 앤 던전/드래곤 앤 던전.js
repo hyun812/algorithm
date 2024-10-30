@@ -1,59 +1,57 @@
-const fs = require('fs');
-const input = fs.readFileSync("./dev/stdin").toString().trim().split("\n").map(v => v.split(' ').map(Number))
-const [N, _ATK] = input.shift();
-const ATK = BigInt(_ATK)
-let answer = Infinity;
+const path = process.platform === 'linux' ? '/dev/stdin' : 'index.txt';
+const input = require('fs').readFileSync(path).toString().trim().split('\n');
 
-const fight = (hp, atk) => {
-  const MAX = hp;
-  for (let i = 0; i < N; i++) {
-    let [t, a, h] = input[i];
-    a = BigInt(a)
-    h = BigInt(h)
-    switch (t) {
-      case 1:
-        let man_hit = h / atk
-        if (man_hit * atk < h) {
-          man_hit += BigInt(1)
-        }
-        const damage = (man_hit - BigInt(1)) * a;
-        hp -= damage;
-        break;
-      case 2:
-        hp += h;
-        if (hp > MAX) hp = MAX;
-        atk += a;
-        break;
-    }
+const [N, ATK] = input[0].split(' ').map(BigInt);
 
-    if (hp <= BigInt(0)) return false;
+let left = BigInt(0);
+let right = BigInt(0);
+
+const rooms = [];
+for (let i = 0; i < N; i++) {
+  const [type, atk, hp] = input[i + 1].split(' ').map(BigInt);
+  rooms.push([type, atk, hp]);
+  if (type == 1) {
+    right += (hp / ATK + BigInt(1)) * atk;
   }
-  return true;
 }
 
+const isDungeonClear = (maxHP) => {
+  let curATK = ATK;
+  let curHP = maxHP;
 
+  for (const room of rooms) {
+    const [type, atk, hp] = room;
 
-let min = BigInt(1);
-let max = BigInt(0);
+    if (type == 1) {
+      let man_hit = hp / curATK;
+      if (man_hit * curATK < hp) {
+        man_hit += BigInt(1);
+      }
+      const damage = (man_hit - BigInt(1)) * atk;
+      curHP -= damage;
 
-input.forEach(v => {
-  let [t, a, h] = v;
-  a = BigInt(a)
-  h = BigInt(h)
-  if (t == 1) {
-    max += ((h / ATK) + BigInt(1)) * a
+      if (curHP <= BigInt(0)) return false;
+    } else if (type == 2) {
+      curHP += hp;
+      if (curHP > maxHP) curHP = maxHP;
+      curATK += atk;
+    }
   }
-})
+  return true;
+};
 
-while (min <= max) {
-  let mid = (min + max) / BigInt(2);
-  if (fight(mid, ATK)) {
+let answer = right;
+while (left <= right) {
+  const mid = (left + right) / BigInt(2);
+
+  if (isDungeonClear(mid)) {
     if (answer > mid) {
       answer = mid;
     }
-    max = mid - BigInt(1);
+    right = mid - BigInt(1);
   } else {
-    min = mid + BigInt(1);
+    left = mid + BigInt(1);
   }
 }
-console.log(String(answer))
+
+console.log(String(answer));
