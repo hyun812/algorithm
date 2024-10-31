@@ -3,12 +3,12 @@ class Heap {
     this.heap = [];
   }
 
-  size() {
-    return this.heap.length;
-  }
-
   swap(a, b) {
     [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+  }
+
+  size() {
+    return this.heap.length;
   }
 
   getParent(index) {
@@ -28,7 +28,7 @@ class Heap {
     let parent = this.getParent(index);
 
     while (this.heap[parent] && this.heap[parent][1] > this.heap[index][1]) {
-      this.swap(parent, index);
+      this.swap[(index, parent)];
       index = parent;
       parent = this.getParent(index);
     }
@@ -38,24 +38,24 @@ class Heap {
     let left = this.getLeftChild(index);
     let right = this.getRightChild(index);
 
-    let minIdx = index;
+    let min = index;
 
-    if (this.heap[left] && this.heap[left][1] < this.heap[minIdx][1]) {
-      minIdx = left;
+    if (this.heap[left] && this.heap[left][1] < this.heap[min][1]) {
+      min = left;
     }
 
-    if (this.heap[right] && this.heap[right][1] < this.heap[minIdx][1]) {
-      minIdx = right;
+    if (this.heap[right] && this.heap[right][1] < this.heap[min][1]) {
+      min = right;
     }
 
-    if (minIdx === index) return;
+    if (min === index) return;
 
-    this.swap(minIdx, index);
-    this.bubbleDown(minIdx);
+    this.swap(min, index);
+    this.bubbleDown(min);
   }
 
-  push(value) {
-    this.heap.push(value);
+  push(data) {
+    this.heap.push(data);
     this.bubbleUp();
   }
 
@@ -63,25 +63,25 @@ class Heap {
     if (!this.size()) return null;
     if (this.size() === 1) return this.heap.pop();
 
-    const min = this.heap[0];
+    const data = this.heap[0];
     this.heap[0] = this.heap.pop();
     this.bubbleDown(0);
-    return min;
+
+    return data;
   }
 }
 
-const fs = require('fs');
-const filePath = process.platform === 'linux' ? './dev/stdin' : 'index.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
+const path = process.platform === 'linux' ? '/dev/stdin' : 'index.txt';
+const input = require('fs').readFileSync(path).toString().trim().split('\n');
 
 const [N, D] = input[0].split(' ').map(Number);
-
 const graph = Array.from({ length: D + 1 }, () => []);
 const dist = Array(D + 1).fill(Infinity);
-for (let i = 1; i <= N; i++) {
-  const [from, to, cost] = input[i].split(' ').map(Number);
 
-  if (to > D) continue;
+for (let i = 0; i < N; i++) {
+  const [from, to, cost] = input[i + 1].split(' ').map(Number);
+
+  if (from > D || to > D) continue;
   if (to - from <= cost) continue;
 
   graph[from].push([to, cost]);
@@ -90,14 +90,14 @@ for (let i = 1; i <= N; i++) {
 const dijkstra = () => {
   const pq = new Heap();
 
-  pq.push([0, 0]); // 현재 위치, 현재 비용
+  pq.push([0, 0]);
   dist[0] = 0;
 
   while (pq.size()) {
     const [cur, cost] = pq.pop();
 
     if (cost > dist[cur]) continue;
-    if (cur + 1 <= D && cost + 1 < dist[cur + 1]) {
+    if (cur < D && cost + 1 < dist[cur + 1]) {
       dist[cur + 1] = cost + 1;
       pq.push([cur + 1, cost + 1]);
     }
