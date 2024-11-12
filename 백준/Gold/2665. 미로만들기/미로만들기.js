@@ -3,24 +3,16 @@ const input = require('fs').readFileSync(path).toString().trim().split('\n');
 
 const n = +input[0];
 const map = input.slice(1).map((lines) => lines.split('').map(Number));
-
-let answer = n * n;
+const dist = Array.from({ length: n }, () => Array(n).fill(Infinity));
 
 const dy = [-1, 1, 0, 0];
 const dx = [0, 0, -1, 1];
 const bfs = () => {
-  const queue = [[0, 0, 0]];
-  const visited = Array.from({ length: n }, () => Array.from({ length: n }, () => Array(n * n).fill(0)));
-
-  visited[0][0][0] = 1;
+  const queue = [[0, 0]];
+  dist[0][0] = 0;
 
   while (queue.length) {
-    const [y, x, count] = queue.shift();
-
-    if (y === n - 1 && x === n - 1) {
-      answer = Math.min(answer, count);
-    }
-    if (count >= answer) continue;
+    const [y, x] = queue.shift();
 
     for (let i = 0; i < 4; i++) {
       const ny = y + dy[i];
@@ -29,13 +21,15 @@ const bfs = () => {
       if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
 
       if (map[ny][nx] === 0) {
-        if (visited[ny][nx][count + 1]) continue;
-        visited[ny][nx][count + 1] = 1;
-        queue.push([ny, nx, count + 1]);
+        if (dist[ny][nx] > dist[y][x] + 1) {
+          dist[ny][nx] = dist[y][x] + 1;
+          queue.push([ny, nx]);
+        }
       } else if (map[ny][nx] === 1) {
-        if (visited[ny][nx][count]) continue;
-        visited[ny][nx][count] = 1;
-        queue.push([ny, nx, count]);
+        if (dist[ny][nx] > dist[y][x]) {
+          dist[ny][nx] = dist[y][x];
+          queue.push([ny, nx]);
+        }
       }
     }
   }
@@ -43,4 +37,4 @@ const bfs = () => {
 
 bfs();
 
-console.log(answer);
+console.log(dist[n - 1][n - 1]);
