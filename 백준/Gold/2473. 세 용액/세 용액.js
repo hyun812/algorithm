@@ -9,18 +9,15 @@ arr.sort((a, b) => a - b);
 let answer = [];
 let min = Infinity;
 
-for (let i = 0; i < n; i++) {
-  const target = arr[i];
-
-  const newArr = [...arr.slice(0, i), ...arr.slice(i + 1)];
-  let left = 0;
-  let right = n - 2;
+for (let i = 0; i < n - 2; i++) {
+  let left = i + 1;
+  let right = n - 1;
 
   while (left < right) {
-    const sum = newArr[left] + newArr[right] + target;
+    const sum = arr[left] + arr[right] + arr[i];
 
     if (Math.abs(sum) <= min) {
-      answer = [target, newArr[left], newArr[right]];
+      answer = [arr[i], arr[left], arr[right]];
       min = Math.abs(sum);
     }
 
@@ -32,13 +29,4 @@ for (let i = 0; i < n; i++) {
   }
 }
 
-console.log(answer.sort((a, b) => a - b).join(' '));
-
-/**
- *
- * 5
- *
- * -2 6 -97 -6 98
- *
- *
- */
+console.log(answer.join(' '));
