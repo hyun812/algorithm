@@ -1,24 +1,23 @@
 function solution(cards) {
     const answer = [];
     
-    cards.forEach((v, i) => {
-        let idx = i;
-        let count = 0;
+    const visited = Array(cards.length).fill(0);
+    for (let i = 0; i < cards.length; i++) {
+        let boxLength = 0;
+        let target = cards[i];
         
-        while(true) {
-            if(cards[idx]){
-                const temp = cards[idx];
-                cards[idx] = 0;
-                idx = temp - 1; 
-                count++;
-            }else{
-                answer.push(count);
-                break;
-            }
+        while (true) {
+            if (visited[target]) break;
+            
+            visited[target] = 1;
+            boxLength++;
+            target = cards[target - 1];
         }
-    })
+        
+        boxLength && answer.push(boxLength);
+    }
     
-    const sort = answer.filter((v) => v != 0).sort((a, b) => b-a);
+    answer.sort((a, b) => b - a);
     
-    return sort.length > 1 ? sort[0] * sort[1] : 0;
+    return answer.length > 1 ? answer[0] * answer[1] : 0;
 }
