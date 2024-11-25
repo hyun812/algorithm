@@ -25,16 +25,12 @@ const union = (a, b) => {
   return false;
 };
 
+const answer = [];
 for (let i = 1; i <= m; i++) {
   const [type, a, b] = input[i].split(' ').map(Number);
 
-  if (!type) {
-    union(a, b);
-  } else {
-    if (find(a) === find(b)) {
-      console.log('YES');
-    } else {
-      console.log('NO');
-    }
-  }
+  if (!type) union(a, b);
+  else find(a) === find(b) ? answer.push('YES') : answer.push('NO');
 }
+
+console.log(answer.join('\n'));
