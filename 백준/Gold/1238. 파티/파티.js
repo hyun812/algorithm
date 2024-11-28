@@ -27,7 +27,7 @@ class Heap {
     let index = this.heap.length - 1;
     let parent = this.getParent(index);
 
-    while (this.heap[parent] && this.heap[parent] > this.heap[index]) {
+    while (this.heap[parent] && this.heap[parent][1] > this.heap[index][1]) {
       this.swap(parent, index);
       index = parent;
       parent = this.getParent(index);
@@ -40,11 +40,11 @@ class Heap {
 
     let minIdx = index;
 
-    if (this.heap[left] && this.heap[left] < this.heap[minIdx]) {
+    if (this.heap[left] && this.heap[left][1] < this.heap[minIdx][1]) {
       minIdx = left;
     }
 
-    if (this.heap[right] && this.heap[right] < this.heap[minIdx]) {
+    if (this.heap[right] && this.heap[right][1] < this.heap[minIdx][1]) {
       minIdx = right;
     }
 
