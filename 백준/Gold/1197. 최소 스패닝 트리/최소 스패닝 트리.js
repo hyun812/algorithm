@@ -75,38 +75,43 @@ const path = process.platform === 'linux' ? '/dev/stdin' : 'index.txt';
 const input = require('fs').readFileSync(path).toString().trim().split('\n');
 
 const [V, E] = input[0].split(' ').map(Number);
-const graph = Array.from({ length: V + 1 }, () => []);
-
-const prim = () => {
-  let answer = 0;
-  const pq = new Heap();
-  const visited = Array(V + 1).fill(0);
-
-  pq.enqueue([1, 0]);
-
-  while (pq.size()) {
-    const [cur, weight] = pq.dequeue();
-
-    if (visited[cur]) continue;
-    visited[cur] = 1;
-    answer += weight;
-
-    for (const [next, nextWeight] of graph[cur]) {
-      if (visited[next]) continue;
-
-      pq.enqueue([next, nextWeight]);
-    }
-  }
-
-  return answer;
-};
+const graph = [];
 
 for (let i = 0; i < E; i++) {
-  const [from, to, weight] = input[i + 1].split(' ').map(Number);
-
-  graph[from].push([to, weight]);
-  graph[to].push([from, weight]);
+  const node = input[i + 1].split(' ').map(Number);
+  graph.push(node);
 }
 
-const answer = prim();
+const parents = Array(V + 1)
+  .fill(0)
+  .map((_, i) => i);
+
+const find = (a) => {
+  if (parents[a] === a) return a;
+
+  return (parents[a] = find(parents[a]));
+};
+
+const union = (a, b) => {
+  const aRoot = find(a);
+  const bRoot = find(b);
+
+  if (aRoot === bRoot) return false;
+
+  parents[bRoot] = aRoot;
+  return true;
+};
+
+graph.sort((a, b) => a[2] - b[2]);
+
+let answer = 0;
+let count = 0;
+for (const [from, to, weight] of graph) {
+  if (union(from, to)) {
+    answer += weight;
+    count++;
+    if (count === V - 1) break;
+  }
+}
+
 console.log(answer);
