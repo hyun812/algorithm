@@ -21,25 +21,21 @@ const getPrimeArray = (n) => {
 };
 
 const arr = getPrimeArray(N + 1);
-const prefix = Array(arr.length + 1).fill(0);
-
-for (let i = 1; i <= arr.length; i++) {
-  prefix[i] = arr[i - 1] + prefix[i - 1];
-}
 
 let left = 0;
 let right = 0;
+let sum = 0;
 let answer = 0;
-while (left <= right) {
-  const sum = prefix[right] - prefix[left];
 
+while (true) {
   if (sum === N) {
     answer++;
-    right++;
-  } else if (sum < N) {
-    right++;
+    sum -= arr[left++];
+  } else if (sum > N) {
+    sum -= arr[left++];
   } else {
-    left++;
+    if (right === arr.length) break;
+    sum += arr[right++];
   }
 }
 
