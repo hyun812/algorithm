@@ -39,14 +39,11 @@ const input = require('fs').readFileSync(path).toString().trim().split('\n');
 const [W, H] = input[0].split(' ').map(Number);
 const houses = Array.from({ length: H + 2 }, () => Array(W + 2).fill(0));
 const visited = Array.from({ length: H + 2 }, () => Array(W + 2).fill(0));
-const results = Array.from({ length: H + 2 }, () => Array(W + 2).fill(0));
 
 for (let i = 1; i <= H; i++) {
   const lines = input[i].split(' ').map(Number);
   for (let j = 1; j <= W; j++) {
     houses[i][j] = lines[j - 1];
-
-    if (houses[i][j]) visited[i][j] = 1;
   }
 }
 
@@ -57,6 +54,7 @@ const oddDx = [0, -1, 1, 0, 1, 1];
 const evenDy = [-1, -1, 0, 1, 0, 1];
 const evenDx = [0, -1, -1, 0, 1, -1];
 
+let answer = 0;
 const bfs = () => {
   const queue = new Queue();
 
@@ -73,11 +71,11 @@ const bfs = () => {
       const nx = x + dx[i];
 
       if (ny < 0 || nx < 0 || ny >= H + 2 || nx >= W + 2) continue;
-      if (houses[ny][nx] === 1) {
-        results[y][x] += 1;
+      if (visited[ny][nx]) continue;
+      if (houses[ny][nx]) {
+        answer++;
         continue;
       }
-      if (visited[ny][nx]) continue;
 
       queue.enqueue([ny, nx]);
       visited[ny][nx] = 1;
@@ -86,12 +84,5 @@ const bfs = () => {
 };
 
 bfs();
-
-let answer = 0;
-for (let i = 0; i < H + 2; i++) {
-  for (let j = 0; j < W + 2; j++) {
-    answer += results[i][j];
-  }
-}
 
 console.log(answer);
