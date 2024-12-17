@@ -46,7 +46,6 @@ const dx = [0, 0, -1, 1];
 let answer = Infinity;
 
 const bfs = (start) => {
-  const map = board.map((v) => v.slice());
   const queue = [];
   const visited = Array.from({ length: N }, () => Array(N).fill(0));
 
@@ -65,9 +64,9 @@ const bfs = (start) => {
 
       if (ny < 0 || nx < 0 || ny >= N || nx >= N) continue;
       if (visited[ny][nx]) continue;
-      if (map[ny][nx] === 1) continue;
+      if (board[ny][nx] === 1) continue;
 
-      if (map[ny][nx] === 0) {
+      if (board[ny][nx] === 0) {
         cnt++;
       }
 
