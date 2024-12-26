@@ -1,7 +1,6 @@
-class Heap {
-  constructor(compare) {
+class MinHeap {
+  constructor() {
     this.heap = [];
-    this.compare = compare;
   }
 
   size() {
@@ -28,7 +27,7 @@ class Heap {
     let index = this.heap.length - 1;
     let parent = this.getParent(index);
 
-    while (this.heap[parent] !== undefined && this.compare(this.heap[parent], this.heap[index])) {
+    while (this.heap[parent] !== undefined && this.heap[parent] > this.heap[index]) {
       this.swap(parent, index);
       index = parent;
       parent = this.getParent(index);
@@ -38,20 +37,21 @@ class Heap {
   bubbleDown(index) {
     let left = this.getLeftChild(index);
     let right = this.getRightChild(index);
-    let target = index;
 
-    if (this.heap[left] !== undefined && this.compare(this.heap[target], this.heap[left])) {
-      target = left;
+    let minIdx = index;
+
+    if (this.heap[left] !== undefined && this.heap[left] < this.heap[minIdx]) {
+      minIdx = left;
     }
 
-    if (this.heap[right] !== undefined && this.compare(this.heap[target], this.heap[right])) {
-      target = right;
+    if (this.heap[right] !== undefined && this.heap[right] < this.heap[minIdx]) {
+      minIdx = right;
     }
 
-    if (target !== index) {
-      this.swap(target, index);
-      this.bubbleDown(target);
-    }
+    if (minIdx === index) return;
+
+    this.swap(minIdx, index);
+    this.bubbleDown(minIdx);
   }
 
   peek() {
@@ -67,11 +67,88 @@ class Heap {
     if (!this.size()) return null;
     if (this.size() === 1) return this.heap.pop();
 
-    const root = this.heap[0];
+    const min = this.heap[0];
     this.heap[0] = this.heap.pop();
     this.bubbleDown(0);
 
-    return root;
+    return min;
+  }
+}
+
+class MaxHeap {
+  constructor() {
+    this.heap = [];
+  }
+
+  size() {
+    return this.heap.length;
+  }
+
+  swap(a, b) {
+    [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+  }
+
+  getParent(index) {
+    return Math.floor((index - 1) / 2);
+  }
+
+  getLeftChild(index) {
+    return index * 2 + 1;
+  }
+
+  getRightChild(index) {
+    return index * 2 + 2;
+  }
+
+  bubbleUp() {
+    let index = this.heap.length - 1;
+    let parent = this.getParent(index);
+
+    while (this.heap[parent] !== undefined && this.heap[parent] < this.heap[index]) {
+      this.swap(parent, index);
+      index = parent;
+      parent = this.getParent(index);
+    }
+  }
+
+  bubbleDown(index) {
+    let left = this.getLeftChild(index);
+    let right = this.getRightChild(index);
+
+    let minIdx = index;
+
+    if (this.heap[left] !== undefined && this.heap[left] > this.heap[minIdx]) {
+      minIdx = left;
+    }
+
+    if (this.heap[right] !== undefined && this.heap[right] > this.heap[minIdx]) {
+      minIdx = right;
+    }
+
+    if (minIdx === index) return;
+
+    this.swap(minIdx, index);
+    this.bubbleDown(minIdx);
+  }
+
+  peek() {
+    return this.size() ? this.heap[0] : null;
+  }
+
+  enqueue(data) {
+    this.heap.push(data);
+    this.bubbleUp();
+  }
+
+  dequeue() {
+    if (!this.size()) return null;
+    if (this.size() === 1) return this.heap.pop();
+
+    const min = this.heap[0];
+    this.heap[0] = this.heap.pop();
+    this.bubbleDown(0);
+
+    return min;
   }
 }
 
@@ -82,17 +159,13 @@ const N = +input[0];
 const arr = input.slice(1).map(Number);
 const answer = [];
 
-const minHeap = new Heap((a, b) => a > b);
-const maxHeap = new Heap((a, b) => a < b);
+const minHeap = new MinHeap();
+const maxHeap = new MaxHeap();
 
 for (let i = 0; i < N; i++) {
   const target = arr[i];
 
-  if (minHeap.size() === maxHeap.size()) {
-    maxHeap.enqueue(target);
-  } else {
-    minHeap.enqueue(target);
-  }
+  minHeap.size() === maxHeap.size() ? maxHeap.enqueue(target) : minHeap.enqueue(target);
 
   if (minHeap.size() && maxHeap.size() && minHeap.peek() < maxHeap.peek()) {
     const min = minHeap.dequeue();
