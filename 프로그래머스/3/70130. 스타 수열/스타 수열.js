@@ -3,6 +3,8 @@ function solution(a) {
     
     const counts = new Array(a.length).fill(0);
     a.forEach((v) => counts[v]++ );
+        
+    console.log(counts);
     
     for(let i=0; i<counts.length; i++){
         if(answer >= counts[i]) continue;
