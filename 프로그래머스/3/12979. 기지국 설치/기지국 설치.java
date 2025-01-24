@@ -13,7 +13,7 @@ class Solution {
 			size = target - rightIndex - 1 - w;
 			rightIndex = target + w;
 
-            			if(size <= 0) continue;
+            if(size <= 0) continue;
 
 			int res = size % range != 0 ? size / range + 1 : size / range;
 			answer += res;
