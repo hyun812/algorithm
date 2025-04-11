@@ -15,9 +15,8 @@ function solution(a, edges) {
         const [cur, parent] = stack.pop();
         
         if (visited[cur]) {
-            answer += BigInt(Math.abs(a[cur]));
             a[parent] += a[cur];
-            a[cur] = 0;
+            answer += BigInt(Math.abs(a[cur]));
             continue;    
         }
         
@@ -29,6 +28,5 @@ function solution(a, edges) {
             stack.push([next, cur]);
         }
     }
-    console.log(a)
     return a[0] ? -1 : answer;
 }
