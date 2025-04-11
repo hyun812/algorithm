@@ -17,6 +17,7 @@ function solution(a, edges) {
         if (visited[cur]) {
             a[parent] += a[cur];
             answer += BigInt(Math.abs(a[cur]));
+            a[cur] = 0;
             continue;    
         }
         
@@ -28,5 +29,5 @@ function solution(a, edges) {
             stack.push([next, cur]);
         }
     }
-    return a[0] ? -1 : answer;
+    return answer;
 }
