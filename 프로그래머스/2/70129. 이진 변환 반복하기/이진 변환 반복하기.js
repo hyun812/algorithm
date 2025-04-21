@@ -7,8 +7,7 @@ function solution(s) {
         answer[0]++;
         answer[1] += s.length - re.length;
         
-        s = re.length.toString(2)
-        console.log(s);
+        s = re.length.toString(2);
     }
     
     
