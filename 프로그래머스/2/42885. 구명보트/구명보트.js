@@ -1,16 +1,21 @@
 function solution(people, limit) {
-    people.sort((a, b) => a - b); // 오름차순 정렬
+    let answer = 0;
+    people.sort((a, b) => b - a);
     
     let left = 0;
     let right = people.length - 1;
-    let count = 0;
+    
     while (left <= right) {
         if (people[left] + people[right] <= limit) {
             left++;
+            right--;
+            answer++;
+        }else {
+            left++;
+            answer++;
         }
-        right--;
-        count++;
     }
-
-    return count;
+    
+    
+    return answer;
 }
