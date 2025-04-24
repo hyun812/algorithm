@@ -7,15 +7,12 @@ function solution(people, limit) {
     
     while (left <= right) {
         if (people[left] + people[right] <= limit) {
-            left++;
             right--;
-            answer++;
-        }else {
-            left++;
-            answer++;
         }
+        
+        left++;
+        answer++;
     }
-    
     
     return answer;
 }
