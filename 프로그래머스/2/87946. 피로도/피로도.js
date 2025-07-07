@@ -5,12 +5,8 @@ function solution(k, dungeons) {
     
     const visited = Array(dungeons.length).fill(0);
 
-    const dfs = (cur, result, count) => {
-        if (answer > result + dungeons.length - count) return;
-        if (count === dungeons.length) {
-            answer = Math.max(answer, result);
-            return;
-        }
+    const dfs = (cur, count) => {
+        answer = Math.max(answer, count);
         
         for (let i = 0; i < dungeons.length; i++) {
             const [minimum, consumption] = dungeons[i];
@@ -19,13 +15,12 @@ function solution(k, dungeons) {
             if (cur < minimum) continue;
             
             visited[i] = 1;
-            dfs(cur - consumption, result + 1, count + 1);
+            dfs(cur - consumption, count + 1);
             visited[i] = 0;
-            dfs(cur, result, count + 1);
         }
     }
     
-    dfs(k, 0, 0);
+    dfs(k, 0);
     
     return answer;
 }
