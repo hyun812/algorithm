@@ -1,17 +1,15 @@
 function solution(order) {
-    let answer = 0;
-    
+    let target = 0;
     const stack = [];
-
+    
     for (let i = 1; i <= order.length; i++) {
         stack.push(i);
-
-        while (stack.length && stack.at(-1) === order[answer]) {
-          stack.pop();
-          answer++;
-        }
         
+        while (stack.length && stack.at(-1) === order[target]) {
+            stack.pop();
+            target++;
+        }
     }
-
-    return answer;
+    
+    return target;
 }
