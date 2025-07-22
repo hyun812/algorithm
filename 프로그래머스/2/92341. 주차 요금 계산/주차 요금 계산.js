@@ -9,33 +9,22 @@ function solution(fees, records) {
         return time <= fees[0] ? fees[1] : fees[1] + Math.ceil((time - fees[0]) / fees[2]) * fees[3];
     }
     
-    const answer = new Map();
     const map = new Map();
     for (let i = 0; i < records.length; i++) {
-        const [time, num, type] = records[i].split(' ');
-
+        let [time, num, type] = records[i].split(' ');
+        time = convertTime(time);
+        
         if (type === "IN") {
-            map.set(num, convertTime(time));
+            map.set(num, (map.get(num) || 0) + 1439 - time);
         }else if (type === "OUT") {
-            const result = convertTime(time) - map.get(num);
-            answer.set(num, (answer.get(num) || 0) + result);
-            map.delete(num);
+            map.set(num, (map.get(num) || 0) - 1439 + time)
         }
     }
     
-    if (map.size) {
-        for (const [num, time] of map) {
-            const result = convertTime("23:59") - time;
-            console.log(result)
-            answer.set(num, (answer.get(num) || 0) + result);
-        }
+    const answer = [];
+    for (const [key, value] of map) {
+        answer.push([key, calcFees(value)]);
     }
     
-    const sortedMap = new Map([...answer.entries()].sort((a, b) => a[0] - b[0]));
-    
-    const results = [];
-    for (const [num, time] of sortedMap) {
-        results.push(calcFees(time));
-    }
-    return results;
+    return answer.sort((a, b) => a[0] - b[0]).map(v => v[1]);
 }
