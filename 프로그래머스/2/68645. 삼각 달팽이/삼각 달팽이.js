@@ -1,48 +1,23 @@
-/*  n = 5일때
-    1
-    2 12 (3*n - 3)
-    3 13 11
-    4 14 15 10
-    5  6  7  8  9   
-*/
-
 function solution(n) {
+    const answer = Array.from({ length: n }, () => Array(n).fill(0));
+    const len = n * (n + 1) / 2
     
-    const arr = Array.from({ length: n }, (_, index) => new Array(index+1).fill(0));
+    const dy = [1, 0, -1];
+    const dx = [0, 1, -1];
     
-    let curX = -1;
-    let curY = 0;
-    let count = 0;
-    
-    while(n > 0){
-        // 위->아래
-        for(let i=0; i<n; i++){
-            count++;
-            curX++;
-            arr[curX][curY] = count;
-        }
-
-        // 좌->우
-        for(let i=0; i<n-1; i++){
-            count++;
-            curY++;
-            arr[curX][curY] = count;
-        }
-
-        // 좌측 대각선 위로
-        for(let i=0; i<n-2; i++){
-            count++;
-            curY--;
-            curX--;
-            arr[curX][curY] = count;
-        }
-        n -= 3;
+    let count = 1;
+    let [y, x] = [0, 0];
+    let dir = 0;
+    while (count !== len + 1) {
+        answer[y][x] = count;
+        
+        let ny = y + dy[dir];
+        let nx = x + dx[dir];
+        if (ny < 0 || nx < 0 || ny >= n || nx >= n || answer[ny][nx]) dir = (dir + 1) % 3;
+        
+        y = y + dy[dir];
+        x = x + dx[dir];
+        count++;
     }
-    
-    let answer = [];
-    for (let i = 0; i < arr.length; i++) {
-        answer = [...answer, ...arr[i]];
-    }
-    
-    return answer;
+    return answer.flat().filter(v => v);
 }
