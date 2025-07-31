@@ -1,65 +1,52 @@
 function solution(maps) {
-    let answer = 0;
+    let answer = -1;
     
-    [startY, startX] = [0 , 0];
-    [endY, endX] = [0 , 0];
-    [leverY, leverX] = [0, 0];
+    const N = maps.length;
+    const M = maps[0].length;
     
-    const map = Array.from({length: maps.length}, () => Array(maps[0].length).fill(0));
- 
-    for(let i=0; i<maps.length; i++){
-        for(let j=0; j<maps[0].length; j++){
-            map[i][j] = maps[i][j];
-            
-            if(map[i][j] === "S"){
-                startY = i;
-                startX = j;
-            }else if(map[i][j] === "E"){
-                endY = i;
-                endX = j;
-            }else if(map[i][j] === 'L'){
-                leverY = i;
-                leverX = j;
-            }
+    let [startY, startX] = [0, 0];
+    let [endY, endX] = [0, 0];
+    let [leverY, leverX] = [0, 0];
+    
+    for (let i = 0; i < N; i++) {
+        for (let j = 0; j < M; j++) {
+            if (maps[i][j] === 'S') [startY, startX] = [i, j];
+            else if (maps[i][j] === 'E') [endY, endX] = [i, j];
+            else if (maps[i][j] === 'L') [leverY, leverX] = [i, j];
         }
     }
     
-    const dy = [-1, 1, 0, 0];
-    const dx = [0, 0, -1, 1];
-    
-    const bfs = (y, x, endy, endx) => {
-        const visited = Array.from({length: maps.length}, () => Array(maps[0].length).fill(0));    
-        const q = [[y, x, 0]];
-        visited[y][x] = 1;
+    const dy = [0, 0, -1, 1];
+    const dx = [-1, 1, 0, 0];
+    const bfs = (startY, startX, endY, endX) => {
+        const queue = [[startY, startX, 0]];
+        const visited = Array.from({ length: N }, () => Array(M).fill(0));
         
-        console.log(visited);
-        while(q.length){
-            const [y, x, len] = q.shift();
+        visited[startY][startX] = 1;
+        
+        while (queue.length) {
+            const [y, x, count] = queue.shift();
             
-            if(endy === y && endx === x){
-                return len;
-            }
+            if (y === endY && x === endX) return count;
             
-            for(let i=0; i<4; i++){
-                let ny = y + dy[i];
-                let nx = x + dx[i];
-
-                if(ny<0 || nx<0 || ny>=maps.length || nx>=maps[0].length) continue;
-                if(visited[ny][nx] == 1) continue;
-                if(map[ny][nx] === "X") continue;
+            for (let i = 0; i < 4; i++) {
+                const ny = y + dy[i];
+                const nx = x + dx[i];
+                
+                if (ny < 0 || nx < 0 || ny >= N || nx >= M) continue;
+                if (visited[ny][nx]) continue;
+                if (maps[ny][nx] === 'X') continue;
                 
                 visited[ny][nx] = 1;
-                q.push([ny, nx , len+1]);
+                queue.push([ny, nx, count + 1]);
             }
-        }    
+        }
+        return -1;
     }
     
-    const lever = bfs(startY, startX, leverY, leverX);
-    const end = bfs(leverY, leverX, endY, endX);
+    const sl = bfs(startY, startX, leverY, leverX);
+    const le = bfs(leverY, leverX, endY, endX);
     
-    console.log(lever);
-    console.log(end);
-    
-    
-    return lever && end ? lever+end : -1;
+    if (sl === -1 || le === -1) return -1;
+    return sl + le;
 }
