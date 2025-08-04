@@ -1,23 +1,31 @@
 function solution(stones, k) {
     let left = 1;
-    let right = 200000000;
+    let right = 2000000000;
+    let answer = 0;
     
-    while(left <= right){
+   const isBridgeCrossable = (people) => {
+        let count = 0;
+        for (const stone of stones) {
+            if (stone - people <= 0) {
+                count += 1;
+                if (count >= k) return false;
+            } else {
+                count = 0;
+            }
+        }
+        return true;
+    };
+    
+    while (left <= right) {
         const mid = Math.floor((left + right) / 2);
         
-        let cnt = 0; // 건너띄는 돌의 개수
-        
-        for(const num of stones){
-            if(num - mid <= 0) cnt++;
-            else cnt = 0;
-            
-            if(cnt >= k) break;
-        }
-        
-        if(cnt >= k) right = mid - 1;
-        else {
+        if (isBridgeCrossable(mid)) {
             left = mid + 1;
+            answer = Math.max(answer, left);
+        } else {
+            right = mid - 1;
         }
     }
-    return left;
+    
+    return answer;
 }
