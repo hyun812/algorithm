@@ -1,30 +1,35 @@
 function solution(distance, rocks, n) {
-    let answer = 0;
-    if (rocks.length == n) return distance;
+    rocks.push(distance);
+    rocks.sort((a, b) => a - b);
     
-    rocks = [...rocks.sort((a, b) => a - b), distance];
-    
-    let left = 0;
-    let right = rocks[rocks.length - 1];
-    
-    while (left <= right) {
-        const mid = Math.floor((left + right) / 2); // 각 바위 사이 거리
-        
-        let count = 0; // 제거된 바위 수
-        let now = 0;
-        for(const rock of rocks) {
-            if(rock - now < mid) {
+    const calcDist = (k) => {
+        let count = 0;
+        let prev = 0;
+        for (let i = 0; i < rocks.length; i++) {
+            if (rocks[i] - prev < k) {
                 count++;
-            }else {
-                now = rock;
+            } else {
+                prev = rocks[i];
             }
         }
         
-        if(count > n) {
-            right = mid - 1;
-        }else {
-            left = mid + 1;  
+        if (count > n) return false;
+        return true;
+    }
+    
+    
+    let answer = 0;    
+    let left = 0;
+    let right = distance;
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        
+        if (calcDist(mid)) {
+            left = mid + 1;
             answer = Math.max(answer, mid);
+        } else {
+            right = mid - 1;
         }
     }
     
