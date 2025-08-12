@@ -1,34 +1,27 @@
 function solution(tickets) {
-    var answer = [];
-    
-    const result = [];
-    const visited = [];
-    
     const len = tickets.length;
-    const dfs = (now, count, path) => { // now: 현재 도시 , count: 사용한 티켓 수, path: 경로
-        
-        if(count === len){
-            answer.push(path);
-            return;
+    const visited = new Array(len).fill(false);
+    
+    // 티켓을 도착지 기준으로 사전순 정렬
+    tickets.sort((a, b) => a[1].localeCompare(b[1]));
+    
+    const dfs = (current, path) => {
+        if (path.length === len + 1) {
+            return path;
         }
         
-        for(let i=0; i<len; i++){
-            const from = tickets[i][0];
-            const to = tickets[i][1];
+        for (let i = 0; i < len; i++) {
+            if (visited[i]) continue;
+            if (tickets[i][0] !== current) continue;
             
-            if(now !== from) continue;
-            if(visited[i]) continue;
-            
-            const nextPath = [...path, to];
-            
-            visited[i] = 1;
-            dfs(to, count+1, nextPath);
-            visited[i] = 0;
+            visited[i] = true;
+            const result = dfs(tickets[i][1], [...path, tickets[i][1]]);
+            if (result) return result; // 첫 번째 완성된 경로 반환
+            visited[i] = false;
         }
+        
+        return null;
     }
     
-    dfs("ICN", 0, ["ICN"]);
-    
-    // 가능한 모든 경로 탐색 후 알파벳 순서로 정렬
-    return answer.sort()[0];
+    return dfs("ICN", ["ICN"]);
 }
