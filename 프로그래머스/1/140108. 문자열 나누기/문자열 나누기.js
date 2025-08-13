@@ -1,24 +1,23 @@
 function solution(s) {
-    let answer = 0;
+    var answer = 0;
+    let p = 0;
     
-    let sameCnt = 0;
-    let diffCnt = 0;
-    let target = "";
-    
-    for(const str of s){
-        if(!target) target = str;
+    while (p < s.length) {
+        const x = s[p];
+        let xCount = 1;
+        let count = 0;
+        p++;
         
-        target === str ? sameCnt++ : diffCnt++;
-        
-        if(sameCnt === diffCnt){
-            answer++;
-            sameCnt = 0;
-            diffCnt = 0;
-            target = "";
+        while (p < s.length) {
+            if (xCount === count) {
+                answer++;
+                break;
+            }
+            if (x === s[p]) xCount++;
+            else count++;
+            p++;
         }
     }
     
-    if(target) answer++;
-    
-    return answer;
+    return answer + 1;
 }
