@@ -1,14 +1,25 @@
 function solution(n, s) {
-    const mid = Math.floor(s/n);
+    const answer = [];
     
+    const mid = Math.floor(s / n);
     
-    if(mid < 1) return [-1];
+    if (!mid) return [-1];
     
-    const answer = new Array(n).fill(mid);
-    const rest = Math.floor(s % n);
-    
-    for(let i=0; i<rest; i++){
-        answer[answer.length-1-i]++;
+    if (s % n === 0) {
+        for (let i = 0; i < n; i++) {
+            answer[i] = mid;
+        }
+    } else {
+        let count = s % n;
+        let rest = n - count;
+        
+        for (let i = 0; i < rest; i++) {
+            answer.push(mid);    
+        }
+        
+        for (let i = 0; i < count; i++) {
+            answer.push(mid + 1);
+        }
     }
     
     return answer;
