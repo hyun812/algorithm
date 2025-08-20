@@ -1,10 +1,10 @@
 # [level 2] 가장 큰 정사각형 찾기 - 12905 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12905) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/12905#qna) 
 
 ### 성능 요약
 
-메모리: 82 MB, 시간: 49.57 ms
+메모리: 82 MB, 시간: 47.82 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 04월 16일 09:37:25
+2025년 08월 20일 14:40:37
 
 ### 문제 설명
 
@@ -127,8 +127,9 @@
 <p>입출력 예 #1<br>
 위의 예시와 같습니다.</p>
 
-<p>입출력 예 #2<br>
-| 0 | 0 | <code>1</code> | <code>1</code> |<br>
+<p>입출력 예 #2</p>
+
+<p>| 0 | 0 | <code>1</code> | <code>1</code> |<br>
 | 1 | 1 | <code>1</code> | <code>1</code> | <br>
 로 가장 큰 정사각형의 넓이는 4가 되므로 4를 return합니다.</p>
 
