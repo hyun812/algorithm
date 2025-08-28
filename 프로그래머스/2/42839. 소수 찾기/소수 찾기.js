@@ -1,37 +1,38 @@
-// 만들 수 있는 소수의 개수 구하기
-
 function solution(numbers) {
     let answer = 0;
-
-    const arr = numbers.split('');
-    const num = Array.from({length: numbers.length} , ()=>0);
-    const visited = Array.from({length: numbers.length} , ()=>0);
+    const visited = Array(numbers.length).fill(0);
+    const check = new Set();
     
-    const dfs = (number) => {
-        num.push(+number);
-        for(let i=0; i<arr.length; i++){
-            if(visited[i]) continue;
+    const sosu = (num) => {
+        if (num === 2) return true;
+        
+        for (let i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) return false;
+        }
+        return true;
+    }
+    
+    const dfs = (cur, count) => {
+        if (count === numbers.length) {
+            const num = Number(cur);
+            if (num <= 1 || check.has(num)) return;
+            check.add(num);
+            
+            if (sosu(num)) answer++;
+            return;
+        }
+        
+        for (let i = 0; i < numbers.length; i++) {
+            if (visited[i]) continue;
             
             visited[i] = 1;
-            dfs(number+numbers[i]);
+            dfs(cur + numbers[i], count + 1);
             visited[i] = 0;
+            dfs(cur, count + 1);
         }
     }
     
-    dfs("");
+    dfs("", 0);
     
-    
-    return [...new Set(num)].filter(v=>isPrime(v)).length;
+    return answer;
 }
-
-const isPrime = (n) =>{
-    if(n <= 1) return false;
-    
-    for(let i=2; i<=Math.sqrt(n); i++){
-        if(n % i == 0){
-            return false;
-        }
-    }
-    return true;
-}
-
