@@ -1,41 +1,43 @@
 function solution(n, wires) {
-    let answer = Number.MAX_SAFE_INTEGER;
-    const arr = Array.from(Array(n+1), ()=>[]);
+    let answer = Infinity;
     
-    wires.forEach((value) => {
-        const [a, b] = value;
-        arr[a].push(b);
-        arr[b].push(a);
-    })
-    
-    const bfs = (a, b) => {
-        let cnt = 0;
-        const queue = [];
-        const visited = Array(n+1);
-        
-        visited[a] = 1;
-        queue.push(a);
-        
-        while(queue.length){
-            const cur = queue.shift();
-            
-            arr[cur].forEach((next) => {
-                
-                if(!visited[next] && next !== b){
-                    visited[next] = 1;
-                    queue.push(next);
-                    cnt++;
-                }
-            })
-        }
-        return cnt;
+    // 하나를 끊었을 때 2개로 나눠지는지
+    // 2개로 나누어진다면 그 차이가 최소가 되도록
+    const graph = Array.from({ length: n + 1}, () => []);
+    for (const wire of wires) {
+        const [from, to] = wire;
+        graph[from].push(to);
+        graph[to].push(from);
     }
     
-    wires.forEach((value) => {
-        let [a, b] = value;
+    const bfs = (start, cutNode) => {
+        const queue = [];
+        const visited = Array(n + 1).fill(0);
+        let count = 1;
         
-        answer = Math.min(answer, Math.abs(bfs(a, b) - bfs(b, a)));
-    })
+        queue.push([start]);
+        visited[start] = 1;
+        while (queue.length) {
+            const cur = queue.shift();
+            
+            for (const next of graph[cur]) {
+                if (visited[next]) continue;
+                if (next === cutNode) continue;
+                visited[next] = 1;
+                queue.push([next]);
+                count++;
+            }
+        }
+        
+        return count;
+    }
+    
+    for (const wire of wires) {
+        const result1 = bfs(wire[0], wire[1]);
+        const result2 = bfs(wire[1], wire[0]);
+        answer = Math.min(Math.abs(bfs(wire[0], wire[1]) - bfs(wire[1], wire[0])), answer);
+    }
+    
     
     return answer;
 }
