@@ -1,25 +1,28 @@
-const convertTime = (time) => {
-    const [h, m] = time.split(":").map(Number);
-    
-    return h*60 + m;
-}
-
 function solution(book_time) {
-    const room = [];
+    const CLEANING_TIME = 10;
     
-    book_time.sort();
+    const convertTimeToMinutes = (time) => {
+        const [h, m] = time.split(':');
+        return h * 60 + Number(m);
+    }
     
-    book_time.forEach((time)=>{
-        const [s, e] = time;
-        
-        const start = convertTime(s);
-        const end = convertTime(e) + 10;
-            
-        const idx = room.findIndex((v) => v<=start);
-        
-        if(idx === -1) room.push(end);
-        else room[idx] = end;
-    })
+    const newBook = book_time
+            .map(([start, end]) => [convertTimeToMinutes(start), convertTimeToMinutes(end) + CLEANING_TIME])
+            .sort((a, b) => a[0] - b[0]);
     
-    return room.length;
+    const roomList = [];
+    for (const [start, end] of newBook) {
+        const emptyRoomIndex = roomList.findIndex((room) => room <= start);
+    
+        if (emptyRoomIndex === -1) {
+            roomList.push(end);
+        } else {
+            roomList[emptyRoomIndex] = end;
+        }
+    }
+
+    return roomList.length;
+
+    
+    return answer;
 }
