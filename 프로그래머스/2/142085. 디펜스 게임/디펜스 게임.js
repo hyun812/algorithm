@@ -1,77 +1,92 @@
-/*
-    n 병사의 수
-    k 무적권의 횟수
-    enemy 적의 수 배열
-*/
-
 class Heap {
     constructor() {
         this.heap = [];
     }
     
+    size() {
+        return this.heap.length;
+    }
+    
     swap(a, b) {
-        [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+        [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]]
+    }
+    
+    getParent(index) {
+        return Math.floor((index - 1) / 2);
+    }
+    
+    getLeftChild(index) {
+        return index * 2 + 1;
+    }
+    
+    getRightChild(index) {
+        return index * 2 + 2;
+    }
+    
+    bubbleUp() {
+        let index = this.heap.length - 1;
+        let parent = this.getParent(index);
+        
+        while (this.heap[parent] && this.heap[parent] < this.heap[index]) {
+            this.swap(index, parent);
+            index = parent;
+            parent = this.getParent(index);
+        }
+    }
+    
+    bubbleDown(index) {
+        let left = this.getLeftChild(index);
+        let right = this.getRightChild(index);
+
+        let maxIdx = index;
+
+        if (left < this.heap.length && this.heap[left] > this.heap[maxIdx]) {
+            maxIdx = left;
+        }
+        if (right < this.heap.length && this.heap[right] > this.heap[maxIdx]) {
+            maxIdx = right;
+        }
+
+        if (maxIdx === index) return;
+
+        this.swap(maxIdx, index);
+        this.bubbleDown(maxIdx);
     }
     
     push(value) {
-        const heap = this.heap;
-        heap.push(value);
-        let index = heap.length-1;
-        let parent = Math.floor((index-1)/2);
-        
-        while(index > 0 && heap[index] < heap[parent]) {
-            this.swap(index, parent);
-            index = parent;
-            parent = Math.floor((index-1)/2);
-        }
+        this.heap.push(value);
+        this.bubbleUp();
     }
     
     pop() {
-        const heap = this.heap;
-        if(heap.length <= 1){
-            return heap.pop();
-        }
+        if (this.heap.length === 0) return null;
+        if (this.heap.length === 1) return this.heap.pop();
         
-        const output = heap[0];
-        heap[0] = heap.pop();
-        let index = 0;
-        
-        while (index * 2 + 1 < heap.length) {
-            let left = index * 2 + 1, right = index * 2 + 2, next = index;
-          
-            if (heap[next] > heap[left]) {
-                next = left;
-            }
-          
-            if (right < heap.length && heap[next] > heap[right]) {
-                next = right;
-            }
-
-            if (next === index) {
-                break;
-            }
-            this.swap(index, next);
-          index = next;
-        }
-      return output;
+        const max = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        this.bubbleDown(0);
+        return max;
+    }
+    
+    peek() {
+        return this.heap[0];
     }
 }
 
 function solution(n, k, enemy) {
-    
-    let arr = new Heap();
-    let capacity = 0;
- 
-    //k번째까지는 일단 무적권 쓰면 capacity의 고려 대상에서 제외
-    enemy.slice(0,k).forEach((element)=>arr.push(element));
-    for(let i=k; i<enemy.length; i++){
-        arr.push(enemy[i]);
-        let popNum = arr.pop();
-        if(popNum+capacity > n){
-            return i;
+    const heap = new Heap();
+    let answer = 0;
+    for (let i = 0; i < enemy.length; i++) {
+        heap.push(enemy[i]);
+        n -= enemy[i];
+        
+        if (n < 0) {
+            if (k === 0 || n + heap.peek() < 0) return answer;
+            k--;
+            n += heap.pop();
         }
-        capacity += popNum;
+        answer += 1;
     }
-
-    return enemy.length;
+    
+    return answer;
 }
