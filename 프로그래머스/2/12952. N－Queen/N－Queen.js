@@ -1,32 +1,31 @@
 function solution(n) {
     let answer = 0;
+    const board = Array(n).fill(0);
     
-    const arr = [];
-    
-    const check = (x, y) => {
-        for(const [a, b] of arr){
-            if(a === x || b === y) return false;
-            if(Math.abs(a-x) === Math.abs(b-y)) return false;       
+    const check = (y, x, board) => {
+        for (let i = 0 ; i < y; i++) {
+            if (board[i] === x) return false;
+            if (Math.abs(y - i) === Math.abs(x - board[i])) return false;
         }
         
-        return true;
+        return true
     }
     
-    const dfs = (row) => {
-        if(row === n){
+    const dfs = (y, board) => {
+        const tmpBoard = [...board];
+        if (y === n) {
             answer++;
             return;
         }
         
-        for(let i=0; i<n; i++){
-            if(!check(row, i)) continue;
-            arr.push([row, i]);
-            dfs(row+1);
-            arr.pop();
-        }
+        for (let x = 0; x < n; x++) {
+            if (!check(y, x, tmpBoard)) continue;
+            tmpBoard[y] = x;
+            dfs(y + 1, tmpBoard);
+        }   
     }
     
-    dfs(0);
+    dfs(0, board);
     
     return answer;
 }
