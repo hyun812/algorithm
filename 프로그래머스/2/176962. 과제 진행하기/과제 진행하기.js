@@ -1,31 +1,36 @@
-// 멈춰둔 과제가 여러개라면 가장 최근 멈춘 과제 부터 --> stack
-// 
-// 과제를 끝낸 순서대로 이름
-
 function solution(plans) {
-    const result = [];
-    
-    const sortPlans = plans
-    .map((plan)=>{
-        const [name, time, spend] = plan;
-        const [hour, minute] = time.split(':');
-        const convertedTime = Number(hour) * 60 + Number(minute);
-        
-        return [name, convertedTime, Number(spend)];
-    })
-    .sort((a,b) => b[1] - a[1]);  // 빠른 시간순으로 정렬
-    
-    const waitPlan = [];
-    
-    while(sortPlans.length){
-        const [name, startTime, runningTime] = sortPlans.pop();
-        
-        waitPlan.forEach((wait, index) => {
-            if(startTime < wait[1]) waitPlan[index][1] += runningTime;
-        });
-        
-        waitPlan.push([name, startTime + runningTime]);
+    const timeToMinutes = (time) => {
+        const [h, m] = time.split(':').map(Number);
+        return h * 60 + m;
     }
+
+    plans = plans
+        .map(([name, start, playtime]) => [name, timeToMinutes(start), Number(playtime)])
+        .sort((a, b) => a[1] - b[1]);
     
-    return waitPlan.sort((a, b) => a[1] - b[1]).map((plan) => plan[0]);
+    const answer = [];
+    const stack = [];
+    while (plans.length) {
+        const [name, start, playTime] = plans.shift();
+        
+        if (plans.length) {
+            const [_, nextStart] = plans[0]; // 다음 과제 확인
+            
+            if (start + playTime > nextStart) { // 과제를 다 끝내지 못한 경우
+                stack.push([name, start + playTime - nextStart]);
+            } else { // 과제를 시간 내 끝낸 경우
+                answer.push(name);
+                
+                if (stack.length) {
+                    const [pName, pTime] = stack.pop();
+                    plans.unshift([pName, start + playTime, pTime]);
+                }
+            }
+        } else {
+            answer.push(name);
+        }
+    }
+     
+    answer.push(...stack.reverse().map(v => v[0]));
+    return answer;
 }
