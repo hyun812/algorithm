@@ -1,30 +1,23 @@
+// 소수는 다 1임
+// 나머지 나누어떨어지는 가장 큰수를 찾아야함
 function solution(begin, end) {
-    const arr = [];
-    
-    for(let i=begin; i<=end; i++){
-        arr.push(check(i));
-    }
-    
-    return arr;
-}
-
-function check(n) {
-    const checkArr = [];
-    
-    if(n === 1) return 0;
-    
-    for(let i=2; i<=Math.sqrt(n); i++){
-        if(n%i ===0){
-            checkArr.push(i);
-            if(n/i <= 10000000){
-                return n/i;
-            }
+    const check = (num) => {
+        if (num === 1) return 0;
+        
+        let maxDivisor = 1;
+        
+        for (let i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) {
+                if (num / i <= 1e7) return num / i;
+                maxDivisor = i;
+            }   
         }
+        return maxDivisor;
     }
     
-    if(checkArr.length){
-        return checkArr[checkArr.length-1];
+    const answer = [];
+    for (let i = begin; i <= end; i++) {
+        answer.push(check(i));
     }
-    
-    return 1;
+    return answer;
 }
