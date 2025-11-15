@@ -1,10 +1,10 @@
 # [level 1] 유연근무제 - 388351 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/388351#qna) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/388351) 
 
 ### 성능 요약
 
-메모리: 33.9 MB, 시간: 0.70 ms
+메모리: 37 MB, 시간: 7.08 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 03월 20일 17:51:32
+2025년 11월 15일 19:41:18
 
 ### 문제 설명
 
