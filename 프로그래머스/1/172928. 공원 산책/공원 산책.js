@@ -1,34 +1,61 @@
 function solution(park, routes) {
-    let [y, x] = [-1, -1];
+    let [y, x] = [0, 0];
     
-    for(let i=0; i<park.length; i++){
-        if(park[i].includes('S')) {
-            [y, x] = [i, park[i].indexOf('S')];    
+    outer: for (let i = 0; i < park.length; i++) {
+        for (let j = 0; j < park[0].length; j++) {
+            if (park[i][j] === 'S') {
+                y = i;
+                x = j;
+                park[i][j] = 'O';
+                break outer;
+            }
         }
     }
-    const dirs = { N: [-1, 0], S: [1, 0], W: [0, -1], E: [0, 1]};
-    routes.forEach((route) => {
-        const [r, n] = route.split(" ");
-        
-        let [copyY, copyX] = [y, x];
-        let isOK = true;
-        
-        for(let i=0; i<n; i++){
-            const ny = y+dirs[r][0];
-            const nx = x+dirs[r][1];
-            
-            if(ny < 0 || nx < 0 || ny >= park.length || nx >= park[0].length || park[ny][nx] === "X") {
-                isOK = false;
+    
+    const dy = [-1, 1, 0, 0]; // N, S, W, E
+    const dx = [0, 0, -1, 1];
+    
+    const getDirection = (op) => {
+        let index = -1
+        switch (op) {
+            case 'N' :
+                index = 0;
                 break;
-            }
+            case 'S' :
+                index = 1;
+                break;
+            case 'W' :
+                index = 2;
+                break;
+            case 'E' :
+                index = 3;
+                break;
+        }
+        return index;
+    }
+    
+    const isPosibble = (op, n) => {
+        const dir = getDirection(op);        
+        let ny = y;
+        let nx = x;
+        
+        while (n--) {
+            ny += dy[dir];
+            nx += dx[dir];
             
-            [y, x] = [ny, nx];
+            if (ny < 0 || nx < 0 || ny >= park.length || nx >= park[0].length) return false;
+            if (park[ny][nx] === 'X') return false;
         }
         
-        if(!isOK){
-            [y, x] = [copyY, copyX];   
-        }
-    })
+        y = ny;
+        x = nx;
+        return true;
+    }
+    
+    for (const route of routes) {
+        const [op, n] = route.split(' ');
+        isPosibble(op, n);
+    }
     
     return [y, x];
 }
