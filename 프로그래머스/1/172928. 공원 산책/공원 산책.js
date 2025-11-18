@@ -12,49 +12,22 @@ function solution(park, routes) {
         }
     }
     
-    const dy = [-1, 1, 0, 0]; // N, S, W, E
-    const dx = [0, 0, -1, 1];
-    
-    const getDirection = (op) => {
-        let index = -1
-        switch (op) {
-            case 'N' :
-                index = 0;
-                break;
-            case 'S' :
-                index = 1;
-                break;
-            case 'W' :
-                index = 2;
-                break;
-            case 'E' :
-                index = 3;
-                break;
-        }
-        return index;
-    }
-    
-    const isPosibble = (op, n) => {
-        const dir = getDirection(op);        
-        let ny = y;
-        let nx = x;
-        
-        while (n--) {
-            ny += dy[dir];
-            nx += dx[dir];
-            
-            if (ny < 0 || nx < 0 || ny >= park.length || nx >= park[0].length) return false;
-            if (park[ny][nx] === 'X') return false;
-        }
-        
-        y = ny;
-        x = nx;
-        return true;
-    }
+    const dirs = { E: [0, 1], W: [0, -1], S: [1, 0], N: [-1, 0] };
     
     for (const route of routes) {
         const [op, n] = route.split(' ');
-        isPosibble(op, n);
+        let [ny, nx] = [y, x];
+        let cnt = 0;
+        while (cnt < Number(n)) {
+            ny += dirs[op][0];
+            nx += dirs[op][1];
+            
+            if (ny < 0 || nx < 0 || ny >= park.length || nx >= park[0].length) break;
+            if (park[ny][nx] === 'X') break;
+            cnt++;
+        }
+        
+        if (Number(n) === cnt) [y, x] = [ny, nx];
     }
     
     return [y, x];
