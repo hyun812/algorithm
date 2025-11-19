@@ -2,17 +2,19 @@ function solution(ingredient) {
     let answer = 0;
     const stack = [];
     
-    for(const item of ingredient){
-        stack.push(item);
-        
-        if(stack.length >= 4) {
-            const burger = stack.slice(-4).join("");
-            
-            if(burger === "1231") {
-                stack.splice(-4);
-                answer++;
-            }
+    const checkAndRemoveBurger = () => {
+        if (stack.length >= 4 && stack.slice(-4).join('') === '1231') {
+            stack.splice(-4, 4);
+            answer++;
         }
     }
+    
+    for (let i = 0; i < ingredient.length; i++) {
+        stack.push(ingredient[i]);
+        checkAndRemoveBurger();
+    }
+    
+    checkAndRemoveBurger();
+    
     return answer;
 }
